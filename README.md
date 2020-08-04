@@ -3,10 +3,19 @@
 - This repo contains a full decompilation of Super Mario 64 (J), (U), and (E) with minor exceptions in the audio subsystem.
 - Naming and documentation of the source code and data structures are in progress.
 - Efforts to decompile the Shindou ROM steadily advance toward a matching build.
-- Beyond Nintendo 64, it can also target Linux and Windows natively.
+- Beyond Nintendo 64, it can also target the PS Vita, Linux and Windows natively.
 
 This repo does not include all assets necessary for compiling the game.
 A prior copy of the game is required to extract the assets.
+
+## Building for the Vita
+
+1. Install [VitaSDK](https://vitasdk.org)
+2. Build and install [vitaGL](https://github.com/Rinnegatamante/vitaGL), [vitaShaRK](https://github.com/Rinnegatamante/vitaShaRK) and [libmathneon](https://github.com/Rinnegatamante/math-neon). VitaGL must be build with this command: `make HAVE_SBRK=1 HAVE_SHARK=1 install`.
+3. Clone the repo: `git clone https://github.com/bythos14/sm64-vita.git`, which will create a directory `sm64-vita` and then **enter** it `cd sm64-vita`.
+4. Place a Super Mario 64 ROM called `baserom.<VERSION>.z64` into the repository's root directory for asset extraction, where `VERSION` can be `us`, `jp`, or `eu`.
+5. Run `make TARGET_VITA=1 vpk` to build. Qualify the version through `make VERSION=<VERSION> TARGET_VITA=1 vpk`. Add `-j4` to improve build speed (hardware dependent based on the amount of CPU cores available).
+6. The installable vpk will be located at `build/us_vita/sm64.<VERSION>.f3dex2e.vpk`
 
 ## Building native executables
 
@@ -86,3 +95,11 @@ discuss what you would like to change.
 Run `clang-format` on your code to ensure it meets the project's coding standards.
 
 Official Discord: https://discord.gg/7bcNTPK
+
+## Credits
+
+* WOLFwang for making the livearea assets.
+* fgsfds for the initial effort towards porting to the vita.
+* The original sm64decomp team for this impressive decompilation.
+* The sm64-port team for the work towards porting the decomp to other platforms.
+* Rinnegatamante for making the vitaGL library, it made this port alot easier.

@@ -200,7 +200,7 @@ static struct ShaderProgram *gfx_vitagl_create_and_load_new_shader(uint32_t shad
 
     sprintf(filename, "app0:shaders/%08X_v.cg", shader_id);
 
-    FILE* fd = fopen(filename, "rb");
+    FILE *fd = fopen(filename, "rb");
     fseek(fd, 0, SEEK_END);
     vs_len = ftell(fd);
     fseek(fd, 0, SEEK_SET);
@@ -389,13 +389,12 @@ static void gfx_vitagl_init(void) {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-static void gfx_vitagl_on_resize () {
-
+static void gfx_vitagl_on_resize() {
 }
 
 static void gfx_vitagl_start_frame(void) {
     vglStartRendering();
-    
+
     glDisable(GL_SCISSOR_TEST);
     glDepthMask(GL_TRUE); // Must be set to clear Z-buffer
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -403,11 +402,10 @@ static void gfx_vitagl_start_frame(void) {
     glEnable(GL_SCISSOR_TEST);
 }
 
-static void gfx_vitagl_end_frame () {
+static void gfx_vitagl_end_frame() {
 }
 
-static void gfx_vitagl_finish_render () {
-
+static void gfx_vitagl_finish_render() {
 }
 
 struct GfxRenderingAPI gfx_vitagl_api = {

@@ -1,14 +1,13 @@
 #ifdef TARGET_VITA
 
 #include <stdbool.h>
-#include <vitasdk.h>
+#include <psp2/audioout.h>
 
 #include "audio_api.h"
 
 #define AUDIO_SIZE 1024
 #define AUDIO_RATE 32000
 
-static SceRtcTick initial_tick;
 int chan = -1;
 
 static bool audio_vita_init(void) {
@@ -19,7 +18,7 @@ static bool audio_vita_init(void) {
 }
 
 static int audio_vita_buffered(void) {
-    return AUDIO_SIZE - sceAudioOutGetRestSample(chan);
+    return sceAudioOutGetRestSample(chan);
 }
 
 static int audio_vita_get_desired_buffered(void) {
@@ -30,10 +29,6 @@ static void audio_vita_play(const uint8_t *buf, size_t len) {
     sceAudioOutOutput(chan, buf);
 }
 
-static void audio_vita_shutdown(void) {
-    sceAudioOutReleasePort(chan);
-    chan = -1;
-}
 
 struct AudioAPI audio_vita = {
     audio_vita_init,
