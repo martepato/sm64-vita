@@ -1,4 +1,3 @@
-// Opening Mario head shader
 float4 main(
 	float4 aVtxPos,
 	float2 aTexCoord,

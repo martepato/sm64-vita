@@ -1,4 +1,3 @@
-// Used for some textured 3D objects like terrain
 float4 main(
 	float4 aVtxPos,
 	float2 aTexCoord,
