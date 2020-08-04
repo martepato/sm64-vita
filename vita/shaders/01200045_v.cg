@@ -1,0 +1,15 @@
+// Used for some textured 3D objects. Also used for the messed up skybox.
+float4 main(
+	float4 aVtxPos,
+	float2 aTexCoord,
+	float4 aInput1,
+	uniform float4x4 proj,
+	out float2 vTexCoord : TEXCOORD0,
+	out float4 vInput1 : TEXCOORD2 
+) : POSITION
+{
+	vTexCoord = aTexCoord;
+	vInput1 = aInput1;
+
+	return float4(aVtxPos.xy, 1.0, aVtxPos.w);
+}

@@ -16,6 +16,10 @@
 #include "gfx_rendering_api.h"
 #include "gfx_screen_config.h"
 
+#ifdef TARGET_VITA
+#include <psp2/kernel/processmgr.h>
+#endif
+
 #define SUPPORT_CHECK(x) assert(x)
 
 // SCALE_M_N: upscale/downscale M-bit integer to N-bit
@@ -160,9 +164,13 @@ static struct GfxRenderingAPI *gfx_rapi;
 
 #include <time.h>
 static unsigned long get_time(void) {
+#ifndef TARGET_VITA    
     struct timespec ts;
     clock_gettime(CLOCK_MONOTONIC, &ts);
     return (unsigned long)ts.tv_sec * 1000000 + ts.tv_nsec / 1000;
+#else
+    return sceKernelGetProcessTimeWide();
+#endif
 }
 
 static void gfx_flush(void) {

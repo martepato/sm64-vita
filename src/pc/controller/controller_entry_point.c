@@ -16,7 +16,14 @@
 #include "controller_wup.h"
 #endif
 
+#ifdef TARGET_VITA
+#include "controller_vita.h"
+#endif
+
 static struct ControllerAPI *controller_implementations[] = {
+#ifdef TARGET_VITA
+    &controller_vita,
+#else
     &controller_recorded_tas,
 #if defined(_WIN32) || defined(_WIN64)
     &controller_xinput,
@@ -27,6 +34,7 @@ static struct ControllerAPI *controller_implementations[] = {
     &controller_wup,
 #endif
     &controller_keyboard,
+#endif
 };
 
 s32 osContInit(UNUSED OSMesgQueue *mq, u8 *controllerBits, UNUSED OSContStatus *status) {

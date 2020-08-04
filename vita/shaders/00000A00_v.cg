@@ -1,0 +1,12 @@
+// Start menu background Z vertex position set to 1 to keep it in the background.
+float4 main(
+	float4 aVtxPos,
+	float2 aTexCoord,
+	uniform float4x4 proj,
+	out float2 vTexCoord : TEXCOORD0 
+) : POSITION
+{
+	vTexCoord = aTexCoord;
+
+	return float4(aVtxPos.xy, 1.0, aVtxPos.w);
+}

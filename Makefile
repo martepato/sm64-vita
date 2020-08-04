@@ -21,6 +21,8 @@ NON_MATCHING ?= 0
 TARGET_N64 ?= 0
 # Build for Emscripten/WebGL
 TARGET_WEB ?= 0
+# Build for PS Vita
+TARGET_VITA ?= 0
 # Compiler to use (ido or gcc)
 COMPILER ?= ido
 
@@ -30,12 +32,15 @@ ifeq ($(TARGET_N64),0)
   NON_MATCHING := 1
   GRUCODE := f3dex2e
   TARGET_WINDOWS := 0
-  ifeq ($(TARGET_WEB),0)
-    ifeq ($(OS),Windows_NT)
-      TARGET_WINDOWS := 1
-    else
-      # TODO: Detect Mac OS X, BSD, etc. For now, assume Linux
-      TARGET_LINUX := 1
+  
+  ifeq ($(TARGET_VITA), 0)
+    ifeq ($(TARGET_WEB),0)
+      ifeq ($(OS),Windows_NT)
+        TARGET_WINDOWS := 1
+      else
+        # TODO: Detect Mac OS X, BSD, etc. For now, assume Linux
+        TARGET_LINUX := 1
+      endif
     endif
   endif
 
@@ -47,8 +52,10 @@ ifeq ($(TARGET_N64),0)
       endif
     endif
   else
-    # On others, default to OpenGL
-    ENABLE_OPENGL ?= 1
+    ifeq ($(TARGET_VITA), 0)
+      # On others, default to OpenGL
+      ENABLE_OPENGL ?= 1
+    endif
   endif
 
   # Sanity checks
@@ -191,10 +198,14 @@ BUILD_DIR_BASE := build
 ifeq ($(TARGET_N64),1)
   BUILD_DIR := $(BUILD_DIR_BASE)/$(VERSION)
 else
+ifeq ($(TARGET_VITA),1)
+  BUILD_DIR := $(BUILD_DIR_BASE)/$(VERSION)_vita
+else
 ifeq ($(TARGET_WEB),1)
   BUILD_DIR := $(BUILD_DIR_BASE)/$(VERSION)_web
 else
   BUILD_DIR := $(BUILD_DIR_BASE)/$(VERSION)_pc
+endif
 endif
 endif
 
@@ -423,22 +434,38 @@ export LANG := C
 
 else # TARGET_N64
 
-AS := as
-ifneq ($(TARGET_WEB),1)
-  CC := gcc
-  CXX := g++
+ifeq ($(TARGET_VITA),1)
+  CROSS := arm-vita-eabi-
+  OPT_FLAGS += -mtune=cortex-a9 -mfpu=neon
+  VITA_APPNAME := Super Mario 64 PC
+  VITA_TITLEID := SM6400001
+
+  AS        := $(CROSS)as
+  CC        := $(CROSS)gcc
+  CPP       := $(CROSS)cpp -P
+  LD        := $(CROSS)g++
+  AR        := $(CROSS)ar
+  OBJDUMP   := $(CROSS)objdump
+  OBJCOPY   := $(CROSS)objcopy
+  PYTHON    := python3
 else
-  CC := emcc
+  AS := as
+  ifneq ($(TARGET_WEB),1)
+    CC := gcc
+    CXX := g++
+  else
+    CC := emcc
+  endif
+  ifeq ($(TARGET_WINDOWS),1)
+    LD := $(CXX)
+  else
+    LD := $(CC)
+  endif
+  CPP := cpp -P
+  OBJDUMP := objdump
+  OBJCOPY := objcopy
+  PYTHON := python3
 endif
-ifeq ($(TARGET_WINDOWS),1)
-  LD := $(CXX)
-else
-  LD := $(CC)
-endif
-CPP := cpp -P
-OBJDUMP := objdump
-OBJCOPY := objcopy
-PYTHON := python3
 
 # Platform-specific compiler and linker flags
 ifeq ($(TARGET_WINDOWS),1)
@@ -452,6 +479,15 @@ endif
 ifeq ($(TARGET_WEB),1)
   PLATFORM_CFLAGS  := -DTARGET_WEB
   PLATFORM_LDFLAGS := -lm -no-pie -s TOTAL_MEMORY=20MB -g4 --source-map-base http://localhost:8080/ -s "EXTRA_EXPORTED_RUNTIME_METHODS=['callMain']"
+endif
+ifeq ($(TARGET_VITA),1)
+  PLATFORM_CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -Wfatal-errors -fsigned-char -DTARGET_VITA -D__vita__ -DGBI_FLOATS
+  PLATFORM_LDFLAGS := -Wl,-q \
+    -lvitaGL -lvitashark \
+    -lSceLibKernel_stub -lScePvf_stub -lmathneon -lSceAppMgr_stub \
+    -lSceSysmodule_stub -lSceCtrl_stub -lSceTouch_stub -lm -lSceNet_stub \
+    -lSceNetCtl_stub -lSceAppUtil_stub -lc -lScePower_stub -lSceCommonDialog_stub \
+    -lSceAudio_stub -lSceShaccCg_stub -lSceGxm_stub -lSceDisplay_stub -lSceNet_stub -lSceNetCtl_stub
 endif
 
 PLATFORM_CFLAGS += -DNO_SEGMENTED_MEMORY -DUSE_SYSTEM_MALLOC
@@ -485,7 +521,11 @@ endif
 GFX_CFLAGS += -DWIDESCREEN
 
 CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security -D_LANGUAGE_C $(VERSION_CFLAGS) $(MATCH_CFLAGS) $(PLATFORM_CFLAGS) $(GFX_CFLAGS) $(GRUCODE_CFLAGS)
-CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) -D_LANGUAGE_C $(VERSION_CFLAGS) $(MATCH_CFLAGS) $(PLATFORM_CFLAGS) $(GFX_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv -march=native
+ifeq ($(TARGET_VITA), 0)
+  CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) -D_LANGUAGE_C $(VERSION_CFLAGS) $(MATCH_CFLAGS) $(PLATFORM_CFLAGS) $(GFX_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv -march=native
+else
+  CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) -D_LANGUAGE_C $(VERSION_CFLAGS) $(MATCH_CFLAGS) $(PLATFORM_CFLAGS) $(GFX_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv -march=armv7-a
+endif
 
 ASFLAGS := -I include -I $(BUILD_DIR) $(VERSION_ASFLAGS)
 
@@ -825,7 +865,18 @@ $(EXE): $(O_FILES) $(MIO0_FILES:.mio0=.o) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(
 	$(LD) -L $(BUILD_DIR) -o $@ $(O_FILES) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES) $(LDFLAGS)
 endif
 
-
+vpk: $(EXE)
+	@cp -r -f vita/sce_sys $(BUILD_DIR)/sce_sys
+	@cp -r -f vita/shaders $(BUILD_DIR)/shaders
+	@cp $< $<.unstripped.elf
+	@$(CROSS)strip -g $<
+	@vita-elf-create $< $(EXE).velf
+	@vita-make-fself -s $(EXE).velf $(BUILD_DIR)/eboot.bin
+	@vita-mksfoex -s TITLE_ID="$(VITA_TITLEID)" "$(VITA_APPNAME)" $(BUILD_DIR)/sce_sys/param.sfo
+	@vita-pack-vpk -s $(BUILD_DIR)/sce_sys/param.sfo -b $(BUILD_DIR)/eboot.bin \
+		--add $(BUILD_DIR)/sce_sys=sce_sys \
+    --add $(BUILD_DIR)/shaders=shaders \
+		$(EXE).vpk
 
 .PHONY: all clean distclean default diff test load libultra
 # with no prerequisites, .SECONDARY causes no intermediate target to be removed

@@ -146,7 +146,11 @@ s32 osEepromLongRead(UNUSED OSMesgQueue *mq, u8 address, u8 *buffer, int nbytes)
         ret = 0;
     }
 #else
+#ifndef TARGET_VITA
     FILE *fp = fopen("sm64_save_file.bin", "rb");
+#else
+    FILE *fp = fopen("ux0:data/sm64_save_file.bin", "rb");
+#endif
     if (fp == NULL) {
         return -1;
     }
@@ -176,7 +180,12 @@ s32 osEepromLongWrite(UNUSED OSMesgQueue *mq, u8 address, u8 *buffer, int nbytes
     }, content);
     s32 ret = 0;
 #else
-    FILE* fp = fopen("sm64_save_file.bin", "wb");
+
+#ifndef TARGET_VITA
+    FILE *fp = fopen("sm64_save_file.bin", "wb");
+#else
+    FILE *fp = fopen("ux0:data/sm64_save_file.bin", "wb");
+#endif
     if (fp == NULL) {
         return -1;
     }

@@ -1,0 +1,12 @@
+// Used for some single color 3D objects.
+float4 main(
+	float4 aVtxPos,
+	float3 aInput1,
+	uniform float4x4 proj,
+	out float3 vInput1 : TEXCOORD2 
+) : POSITION
+{
+	vInput1 = aInput1;
+
+	return aVtxPos;
+}
