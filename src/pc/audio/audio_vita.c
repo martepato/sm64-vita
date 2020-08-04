@@ -14,7 +14,7 @@ int chan = -1;
 static bool audio_vita_init(void) {
     const int vol[] = { 32767, 32767 };
     chan = sceAudioOutOpenPort(SCE_AUDIO_OUT_PORT_TYPE_BGM, AUDIO_SIZE / 4, AUDIO_RATE, SCE_AUDIO_OUT_MODE_STEREO);
-    sceAudioOutSetConfig(chan, -1, -1, -1);
+    sceAudioOutSetConfig(chan, -1, -1, -1); // Remove this line once audio is implemented.
     sceAudioOutSetVolume(chan, SCE_AUDIO_VOLUME_FLAG_L_CH | SCE_AUDIO_VOLUME_FLAG_R_CH, vol);
     return true;
 }
