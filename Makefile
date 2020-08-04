@@ -481,7 +481,7 @@ ifeq ($(TARGET_WEB),1)
   PLATFORM_LDFLAGS := -lm -no-pie -s TOTAL_MEMORY=20MB -g4 --source-map-base http://localhost:8080/ -s "EXTRA_EXPORTED_RUNTIME_METHODS=['callMain']"
 endif
 ifeq ($(TARGET_VITA),1)
-  PLATFORM_CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -Wfatal-errors -fsigned-char -DTARGET_VITA -D__vita__ -DGBI_FLOATS
+  PLATFORM_CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -Wfatal-errors -fsigned-char -DTARGET_VITA -D__vita__
   PLATFORM_LDFLAGS := -Wl,-q \
     -lvitaGL -lvitashark \
     -lSceLibKernel_stub -lScePvf_stub -lmathneon -lSceAppMgr_stub \
@@ -866,8 +866,8 @@ $(EXE): $(O_FILES) $(MIO0_FILES:.mio0=.o) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(
 endif
 
 vpk: $(EXE)
-	@cp -r -f vita/sce_sys $(BUILD_DIR)/sce_sys
-	@cp -r -f vita/shaders $(BUILD_DIR)/shaders
+	@cp -r --remove-destination vita/sce_sys $(BUILD_DIR)/
+	@cp -r --remove-destination vita/shaders $(BUILD_DIR)/
 	@cp $< $<.unstripped.elf
 	@$(CROSS)strip -g $<
 	@vita-elf-create $< $(EXE).velf

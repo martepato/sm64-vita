@@ -20,6 +20,8 @@
 #include <psp2/kernel/processmgr.h>
 #endif
 
+#define GBI_FLOATS
+
 #define SUPPORT_CHECK(x) assert(x)
 
 // SCALE_M_N: upscale/downscale M-bit integer to N-bit

@@ -403,7 +403,6 @@ static void gfx_vitagl_start_frame(void) {
     glEnable(GL_SCISSOR_TEST);
 }
 
-static SceCtrlData c_pad;
 static void gfx_vitagl_end_frame () {
 }
 
