@@ -10,6 +10,8 @@ A prior copy of the game is required to extract the assets.
 
 ## Building for the Vita
 
+For running this on the PS Vita you will first need to extract the runtime shader compiler. Follow this [guide](https://samilops2.gitbook.io/vita-troubleshooting-guide/shader-compiler/extract-libshacccg.suprx) for help with that.
+
 1. Install [VitaSDK](https://vitasdk.org)
 2. Build and install [vitaGL](https://github.com/Rinnegatamante/vitaGL), [vitaShaRK](https://github.com/Rinnegatamante/vitaShaRK) and [libmathneon](https://github.com/Rinnegatamante/math-neon). VitaGL must be build with this command: `make HAVE_SBRK=1 HAVE_SHARK=1 install`.
 3. Clone the repo: `git clone https://github.com/bythos14/sm64-vita.git`, which will create a directory `sm64-vita` and then **enter** it `cd sm64-vita`.
