@@ -6,7 +6,11 @@
 static FILE *fp;
 
 static void tas_init(void) {
+    #ifdef TARGET_VITA
+    fp = fopen("ux0:data/cont.m64", "rb");
+    #else
     fp = fopen("cont.m64", "rb");
+    #endif
     if (fp != NULL) {
         uint8_t buf[0x400];
         fread(buf, 1, sizeof(buf), fp);
