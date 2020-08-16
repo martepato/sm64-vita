@@ -24,7 +24,6 @@ static struct ControllerAPI *controller_implementations[] = {
 #ifdef TARGET_VITA
     &controller_vita,
 #else
-    &controller_recorded_tas,
 #if defined(_WIN32) || defined(_WIN64)
     &controller_xinput,
 #else
@@ -35,6 +34,7 @@ static struct ControllerAPI *controller_implementations[] = {
 #endif
     &controller_keyboard,
 #endif
+    &controller_recorded_tas,
 };
 
 s32 osContInit(UNUSED OSMesgQueue *mq, u8 *controllerBits, UNUSED OSContStatus *status) {
