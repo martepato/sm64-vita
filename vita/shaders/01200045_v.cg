@@ -11,5 +11,8 @@ float4 main(
 	vTexCoord = aTexCoord;
 	vInput1 = aInput1;
 
-	return float4(aVtxPos.xy, 1.0, aVtxPos.w);
+	if(vInput1.a == 1) // HACK
+		return float4(aVtxPos.xy, 1.0, aVtxPos.w);
+	else
+		return aVtxPos;
 }
