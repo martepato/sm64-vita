@@ -1,5 +1,5 @@
 diff --git a/include/types.h b/include/types.h
-index 5132a4ed..f5a441df 100644
+index a33dc72..18887a4 100644
 --- a/include/types.h
 +++ b/include/types.h
 @@ -117,6 +117,10 @@ struct AnimInfo
@@ -48,7 +48,7 @@ index 5132a4ed..f5a441df 100644
  
  struct MarioBodyState
 diff --git a/src/engine/graph_node.h b/src/engine/graph_node.h
-index 22ab70ce..cf566a1c 100644
+index a680f70..a31bb8a 100644
 --- a/src/engine/graph_node.h
 +++ b/src/engine/graph_node.h
 @@ -109,6 +109,8 @@ struct GraphNodePerspective
@@ -112,7 +112,7 @@ index 22ab70ce..cf566a1c 100644
  
  /** A node that allows an object to specify a different culling radius than the
 diff --git a/src/engine/surface_collision.c b/src/engine/surface_collision.c
-index 69f40c9c..9118d885 100644
+index 9aff62f..9c062cf 100644
 --- a/src/engine/surface_collision.c
 +++ b/src/engine/surface_collision.c
 @@ -7,6 +7,7 @@
@@ -232,7 +232,7 @@ index 69f40c9c..9118d885 100644
          break;
      }
 diff --git a/src/engine/surface_load.c b/src/engine/surface_load.c
-index b447dc24..005cbd0f 100644
+index 6936d8a..b2b7b37 100644
 --- a/src/engine/surface_load.c
 +++ b/src/engine/surface_load.c
 @@ -14,6 +14,7 @@
@@ -256,7 +256,7 @@ index b447dc24..005cbd0f 100644
      surface->vertex2[0] = x2;
      surface->vertex3[0] = x3;
 diff --git a/src/game/camera.c b/src/game/camera.c
-index 8082ef5e..fb569826 100644
+index 60bfb86..fd91026 100644
 --- a/src/game/camera.c
 +++ b/src/game/camera.c
 @@ -483,6 +483,10 @@ CameraTransition sModeTransitions[] = {
@@ -375,7 +375,7 @@ index 8082ef5e..fb569826 100644
  
  /**
 diff --git a/src/game/camera.h b/src/game/camera.h
-index f56ed027..2b682ed0 100644
+index f56ed02..2b682ed 100644
 --- a/src/game/camera.h
 +++ b/src/game/camera.h
 @@ -654,6 +654,8 @@ struct LakituState
@@ -388,7 +388,7 @@ index f56ed027..2b682ed0 100644
  
  // bss order hack to not affect BSS order. if possible, remove me, but it will be hard to match otherwise
 diff --git a/src/game/envfx_bubbles.c b/src/game/envfx_bubbles.c
-index 16a92720..ee1b029d 100644
+index 16a9272..ee1b029 100644
 --- a/src/game/envfx_bubbles.c
 +++ b/src/game/envfx_bubbles.c
 @@ -35,6 +35,20 @@ Vtx_t gBubbleTempVtx[3] = {
@@ -496,7 +496,7 @@ index 16a92720..ee1b029d 100644
      gSPDisplayList(sGfxCursor++, &tiny_bubble_dl_0B006AB0);
      gSPEndDisplayList(sGfxCursor++);
 diff --git a/src/game/envfx_snow.c b/src/game/envfx_snow.c
-index c3c14a5c..d2212ef6 100644
+index c3c14a5..d2212ef 100644
 --- a/src/game/envfx_snow.c
 +++ b/src/game/envfx_snow.c
 @@ -54,6 +54,26 @@ extern void *tiny_bubble_dl_0B006AB0;
@@ -594,7 +594,7 @@ index c3c14a5c..d2212ef6 100644
      gSPDisplayList(gfx++, &tiny_bubble_dl_0B006AB0) gSPEndDisplayList(gfx++);
  
 diff --git a/src/game/envfx_snow.h b/src/game/envfx_snow.h
-index 7a83b536..f4acc2de 100644
+index 7a83b53..f4acc2d 100644
 --- a/src/game/envfx_snow.h
 +++ b/src/game/envfx_snow.h
 @@ -25,7 +25,8 @@ struct EnvFxParticle {
@@ -608,7 +608,7 @@ index 7a83b536..f4acc2de 100644
  
  extern s8 gEnvFxMode;
 diff --git a/src/game/hud.c b/src/game/hud.c
-index 8d4daa54..7ce2b222 100644
+index 8d4daa5..7ce2b22 100644
 --- a/src/game/hud.c
 +++ b/src/game/hud.c
 @@ -57,6 +57,20 @@ static struct UnusedHUDStruct sUnusedHUDValues = { 0x00, 0x0A, 0x00 };
@@ -658,7 +658,7 @@ index 8d4daa54..7ce2b222 100644
      gSPMatrix(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(mtx++),
                G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_PUSH);
 diff --git a/src/game/ingame_menu.c b/src/game/ingame_menu.c
-index 35df1cf9..7b82744a 100644
+index b9a43df..281e0f3 100644
 --- a/src/game/ingame_menu.c
 +++ b/src/game/ingame_menu.c
 @@ -111,6 +111,41 @@ u8 gMenuHoldKeyIndex = 0;
@@ -741,7 +741,7 @@ index 35df1cf9..7b82744a 100644
  #endif
      }
 diff --git a/src/game/level_geo.c b/src/game/level_geo.c
-index 1fc4b88e..088a679d 100644
+index 4c98e70..abc5121 100644
 --- a/src/game/level_geo.c
 +++ b/src/game/level_geo.c
 @@ -34,12 +34,16 @@ Gfx *geo_envfx_main(s32 callContext, struct GraphNode *node, Mat4 mtxf) {
@@ -762,7 +762,7 @@ index 1fc4b88e..088a679d 100644
              }
              SET_HIGH_U16_OF_32(*params, gAreaUpdateCounter);
 diff --git a/src/game/object_helpers.c b/src/game/object_helpers.c
-index 9b5e4795..8468483d 100644
+index 2cc0224..41a26bf 100644
 --- a/src/game/object_helpers.c
 +++ b/src/game/object_helpers.c
 @@ -1549,6 +1549,7 @@ void cur_obj_set_pos_to_home(void) {
@@ -774,7 +774,7 @@ index 9b5e4795..8468483d 100644
  
  void cur_obj_set_pos_to_home_and_stop(void) {
 diff --git a/src/game/paintings.c b/src/game/paintings.c
-index 83bd2ce9..f39836d4 100644
+index 205a9ea..9583c64 100644
 --- a/src/game/paintings.c
 +++ b/src/game/paintings.c
 @@ -189,6 +189,32 @@ struct Painting **sPaintingGroups[] = {
@@ -851,7 +851,7 @@ index 83bd2ce9..f39836d4 100644
      // Update the ripple, may automatically reset the painting's state.
      painting_update_ripple_state(painting);
 diff --git a/src/game/rendering_graph_node.c b/src/game/rendering_graph_node.c
-index 1f94b564..b2a711d7 100644
+index 80dbfca..b083717 100644
 --- a/src/game/rendering_graph_node.c
 +++ b/src/game/rendering_graph_node.c
 @@ -39,6 +39,8 @@
@@ -1686,7 +1686,7 @@ index 1f94b564..b2a711d7 100644
                    G_MTX_MODELVIEW | G_MTX_LOAD | G_MTX_NOPUSH);
          gCurGraphNodeRoot = node;
 diff --git a/src/game/screen_transition.c b/src/game/screen_transition.c
-index 5d36905c..36e9c92e 100644
+index 3673a1a..e65c3bd 100644
 --- a/src/game/screen_transition.c
 +++ b/src/game/screen_transition.c
 @@ -16,6 +16,19 @@
@@ -1807,7 +1807,7 @@ index 5d36905c..36e9c92e 100644
      switch (transType) {
          case WARP_TRANSITION_FADE_FROM_COLOR:
 diff --git a/src/menu/intro_geo.c b/src/menu/intro_geo.c
-index 2d49d062..31cb72fe 100644
+index 2d49d06..31cb72f 100644
 --- a/src/menu/intro_geo.c
 +++ b/src/menu/intro_geo.c
 @@ -1,5 +1,6 @@
@@ -1859,7 +1859,7 @@ index 2d49d062..31cb72fe 100644
          gSPDisplayList(displayListIter++, &intro_seg7_dl_0700B3A0);
          gSPPopMatrix(displayListIter++, G_MTX_MODELVIEW);
 diff --git a/src/pc/gfx/gfx_dxgi.cpp b/src/pc/gfx/gfx_dxgi.cpp
-index 02cdd811..c036e0b7 100644
+index 02cdd81..c036e0b 100644
 --- a/src/pc/gfx/gfx_dxgi.cpp
 +++ b/src/pc/gfx/gfx_dxgi.cpp
 @@ -34,10 +34,10 @@
@@ -1876,10 +1876,10 @@ index 02cdd811..c036e0b7 100644
  
  using namespace Microsoft::WRL; // For ComPtr
 diff --git a/src/pc/gfx/gfx_glx.c b/src/pc/gfx/gfx_glx.c
-index 97fe4a8b..cd2fa8ff 100644
+index 5f5dd87..1329287 100644
 --- a/src/pc/gfx/gfx_glx.c
 +++ b/src/pc/gfx/gfx_glx.c
-@@ -19,10 +19,10 @@
+@@ -21,10 +21,10 @@
  
  #ifdef VERSION_EU
  #define FRAME_INTERVAL_US_NUMERATOR 40000
@@ -1893,10 +1893,10 @@ index 97fe4a8b..cd2fa8ff 100644
  
  const struct {
 diff --git a/src/pc/gfx/gfx_sdl2.c b/src/pc/gfx/gfx_sdl2.c
-index 05f1a5ad..bb8ea052 100644
+index 4fd5c43..7897c6b 100644
 --- a/src/pc/gfx/gfx_sdl2.c
 +++ b/src/pc/gfx/gfx_sdl2.c
-@@ -137,7 +137,7 @@ int test_vsync(void) {
+@@ -139,7 +139,7 @@ int test_vsync(void) {
      float average = 4.0 * 1000.0 / (end - start);
  
      vsync_enabled = 1;
@@ -1905,7 +1905,7 @@ index 05f1a5ad..bb8ea052 100644
          SDL_GL_SetSwapInterval(1);
      } else if (average > 57 && average < 63) {
          SDL_GL_SetSwapInterval(2);
-@@ -147,6 +147,13 @@ int test_vsync(void) {
+@@ -149,6 +149,13 @@ int test_vsync(void) {
          SDL_GL_SetSwapInterval(4);
      } else {
          vsync_enabled = 0;
@@ -1919,7 +1919,7 @@ index 05f1a5ad..bb8ea052 100644
      }
  }
  
-@@ -271,8 +278,8 @@ static bool gfx_sdl_start_frame(void) {
+@@ -273,8 +280,8 @@ static bool gfx_sdl_start_frame(void) {
  }
  
  static void sync_framerate_with_timer(void) {
@@ -1930,11 +1930,27 @@ index 05f1a5ad..bb8ea052 100644
      static Uint32 last_time;
      Uint32 elapsed = SDL_GetTicks() - last_time;
  
+diff --git a/src/pc/gfx/gfx_vita.c b/src/pc/gfx/gfx_vita.c
+index 0aa3570..012c4ee 100644
+--- a/src/pc/gfx/gfx_vita.c
++++ b/src/pc/gfx/gfx_vita.c
+@@ -10,9 +10,9 @@
+ 
+ // TODO: figure out if this shit even works
+ #ifdef VERSION_EU
+-    #define FRAMERATE 25
++    #define FRAMERATE 50
+ #else
+-    #define FRAMERATE 30
++    #define FRAMERATE 60
+ #endif
+ 
+ static const uint64_t frametime = 1000000 / FRAMERATE;
 diff --git a/src/pc/pc_main.c b/src/pc/pc_main.c
-index f4467a11..ccc048b7 100644
+index abb3d9f..22939bd 100644
 --- a/src/pc/pc_main.c
 +++ b/src/pc/pc_main.c
-@@ -76,6 +76,25 @@ void send_display_list(struct SPTask *spTask) {
+@@ -80,6 +80,25 @@ void send_display_list(struct SPTask *spTask) {
  #define SAMPLES_LOW 528
  #endif
  
@@ -1960,7 +1976,7 @@ index f4467a11..ccc048b7 100644
  void produce_one_frame(void) {
      gfx_start_frame();
      game_loop_one_iteration();
-@@ -95,6 +114,11 @@ void produce_one_frame(void) {
+@@ -99,6 +118,11 @@ void produce_one_frame(void) {
      audio_api->play((u8 *)audio_buffer, 2 * num_audio_samples * 4);
      
      gfx_end_frame();
