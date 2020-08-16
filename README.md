@@ -23,9 +23,8 @@ Savedata is stored at `ux0:data/sm64_save_file.bin`. `cont.m64` can be put into 
 
 ## Issues
 
-1. Disabled green cap boxes have been observed to render over everything else, other than objects which also have alpha blending. This may be a bug resulting from the vita's GPU arch, might be something else.
-2. Sound is not great, crackling sometimes occurs.
-3. Without hacks in shaders, the black background or the skybox will render over everything else, barring 2D UI elements.
+1. Sound is not great, crackling sometimes occurs.
+2. Without hacks in shaders, the black background or the skybox will render over everything else, barring 2D UI elements.
 
 ## Contributing
 

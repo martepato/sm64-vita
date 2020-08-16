@@ -8,8 +8,8 @@ float4 main(
 {
 	vInput1 = aInput1;
 
-	if(vInput1 == float4(0.0, 0.0, 0.0, 1.0)) // HACK
-		return float4(aVtxPos.xy, -aVtxPos.z, aVtxPos.w);
+	if(vInput1.a == 1.0 && (vInput1.xyz == float3(1.0, 1.0, 1.0) || vInput1.xyz == float3(0.0, 0.0, 0.0))) // HACK
+			return float4(aVtxPos.xy, -aVtxPos.z, aVtxPos.w);
 	else
 		return aVtxPos;
 }
