@@ -26,6 +26,8 @@ static void vita_read(OSContPad *pad) {
         pad->button |= A_BUTTON;
     if (ctrl.buttons & SCE_CTRL_CIRCLE)
         pad->button |= B_BUTTON;
+    if (ctrl.buttons & SCE_CTRL_SQUARE)
+        pad->button |= B_BUTTON;
 
     pad->stick_x = (s8)((s32) ctrl.lx - 128);
     pad->stick_y = (s8)(-((s32) ctrl.ly - 127));
