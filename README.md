@@ -14,7 +14,8 @@ For running this on the PS Vita you will first need to extract the runtime shade
 
 Savedata is stored at `ux0:data/sm64_save_file.bin`. `cont.m64` can be put into the same folder for TAS input.
 
-1. Install [VitaSDK](https://vitasdk.org)
+1. Install prerequisites (Ubuntu): sudo apt install -y git build-essential pkg-config libusb-1.0-0-dev libsdl2-dev.
+2. Install [VitaSDK](https://vitasdk.org)
 3. Clone the repo: `git clone https://github.com/bythos14/sm64-vita.git`, which will create a directory `sm64-vita` and then **enter** it `cd sm64-vita`.
 4. Place a Super Mario 64 ROM called `baserom.<VERSION>.z64` into the repository's root directory for asset extraction, where `VERSION` can be `us`, `jp`, or `eu`.
 5. Run `./build_vita.sh` to build and install dependencies and build the game.
