@@ -871,7 +871,7 @@ vpk: $(EXE)
 	@cp $< $<.unstripped.elf
 	@$(CROSS)strip -g $<
 	@vita-elf-create $< $(EXE).velf
-	@vita-make-fself -s $(EXE).velf $(BUILD_DIR)/eboot.bin
+	@vita-make-fself -s -c $(EXE).velf $(BUILD_DIR)/eboot.bin
 	@vita-mksfoex -s TITLE_ID="$(VITA_TITLEID)" "$(VITA_APPNAME)" $(BUILD_DIR)/sce_sys/param.sfo
 	@vita-pack-vpk -s $(BUILD_DIR)/sce_sys/param.sfo -b $(BUILD_DIR)/eboot.bin \
 		--add $(BUILD_DIR)/sce_sys=sce_sys \
