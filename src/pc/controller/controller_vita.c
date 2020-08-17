@@ -16,6 +16,14 @@ static void vita_read(OSContPad *pad) {
     SceCtrlData ctrl;
     sceCtrlPeekBufferPositive(0, &ctrl, 1);
 
+    if (ctrl.buttons & SCE_CTRL_UP)
+        pad->button |= U_JPAD;
+    if (ctrl.buttons & SCE_CTRL_DOWN)
+        pad->button |= D_JPAD;
+    if (ctrl.buttons & SCE_CTRL_LEFT)
+        pad->button |= L_JPAD;
+    if (ctrl.buttons & SCE_CTRL_RIGHT)
+        pad->button |= R_JPAD;
     if (ctrl.buttons & SCE_CTRL_START)
         pad->button |= START_BUTTON;
     if (ctrl.buttons & SCE_CTRL_LTRIGGER)
@@ -32,13 +40,13 @@ static void vita_read(OSContPad *pad) {
     pad->stick_x = (s8)((s32) ctrl.lx - 128);
     pad->stick_y = (s8)(-((s32) ctrl.ly - 127));
 
-    if (ctrl.rx < 60)
+    if (ctrl.rx < 40)
         pad->button |= L_CBUTTONS;
-    if (ctrl.rx > 180)
+    if (ctrl.rx > 200)
         pad->button |= R_CBUTTONS;
-    if (ctrl.ry < 60)
+    if (ctrl.ry < 40)
         pad->button |= U_CBUTTONS;
-    if (ctrl.ry > 180)
+    if (ctrl.ry > 200)
         pad->button |= D_CBUTTONS;
 }
 

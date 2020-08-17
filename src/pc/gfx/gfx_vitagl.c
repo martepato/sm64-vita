@@ -381,7 +381,7 @@ static void gfx_vitagl_init(void) {
     vglUseVram(GL_TRUE);
     vglWaitVblankStart(GL_TRUE);
 
-    vglInitExtended(0x800000, 960, 544, 0x1000000, SCE_GXM_MULTISAMPLE_4X);
+    vglInitExtended(0x800000, 960, 544, 0, SCE_GXM_MULTISAMPLE_4X);
 
     vglIndexPointerMapped(vgl_indices);
 

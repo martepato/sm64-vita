@@ -37,6 +37,10 @@
 
 #define CONFIG_FILE "sm64config.txt"
 
+#ifdef TARGET_VITA
+unsigned int _newlib_heap_size_user = 64 * 1024 * 1024;
+#endif
+
 OSMesg D_80339BEC;
 OSMesgQueue gSIEventMesgQueue;
 
