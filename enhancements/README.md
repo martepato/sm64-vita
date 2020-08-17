@@ -23,7 +23,7 @@ This allows the game to be rendered at 60 FPS instead of 30 FPS by interpolation
 
 The Mario head intro is the only exception which is still rendered at 30 FPS.
 
-On the Vita, some levels like Bob-omb Battlefield and the Secret Aquariam will crash the game when loading using this patch.
+This patch is rather unstable on the Vita, some levels simply will not load with it.
 
 ## Crash Screen - `crash.patch`
 
