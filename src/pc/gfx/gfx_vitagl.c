@@ -107,7 +107,7 @@ static const char *shader_item_to_str(uint32_t item, bool with_alpha, bool only_
 }
 
 static void append_formula(char *buf, size_t *len, uint8_t c[2][4], bool do_single, bool do_multiply,
-                           bool do_mix, bool with_alpha, bool only_alpha, bool opt_alpha) {
+                           bool do_lerp, bool with_alpha, bool only_alpha, bool opt_alpha) {
     if (do_single) {
         append_str(buf, len,
                    shader_item_to_str(c[only_alpha][3], with_alpha, only_alpha, opt_alpha, false));
@@ -117,7 +117,7 @@ static void append_formula(char *buf, size_t *len, uint8_t c[2][4], bool do_sing
         append_str(buf, len, " * ");
         append_str(buf, len,
                    shader_item_to_str(c[only_alpha][2], with_alpha, only_alpha, opt_alpha, true));
-    } else if (do_mix) {
+    } else if (do_lerp) {
         append_str(buf, len, "lerp(");
         append_str(buf, len,
                    shader_item_to_str(c[only_alpha][1], with_alpha, only_alpha, opt_alpha, false));
@@ -172,7 +172,7 @@ static struct ShaderProgram *gfx_vitagl_create_and_load_new_shader(uint32_t shad
     }
     bool do_single[2] = { c[0][2] == 0, c[1][2] == 0 };
     bool do_multiply[2] = { c[0][1] == 0 && c[0][3] == 0, c[1][1] == 0 && c[1][3] == 0 };
-    bool do_mix[2] = { c[0][1] == c[0][3], c[1][1] == c[1][3] };
+    bool do_lerp[2] = { c[0][1] == c[0][3], c[1][1] == c[1][3] };
     bool color_alpha_same = (shader_id & 0xfff) == ((shader_id >> 12) & 0xfff);
 
     char vs_buf[1024];
@@ -184,38 +184,109 @@ static struct ShaderProgram *gfx_vitagl_create_and_load_new_shader(uint32_t shad
     bool has_texture = false;
     bool has_fog = false;
 
+    // Vertex Shader
+    append_line(vs_buf, &vs_len, "float4 main(");
+    append_line(vs_buf, &vs_len, "float4 aVtxPos,");
     if (used_textures[0] || used_textures[1]) {
+        append_line(vs_buf, &vs_len, "float2 aTexCoord,");
         num_floats += 2;
         has_texture = true;
     }
     if (opt_fog) {
+        append_line(vs_buf, &vs_len, "float4 aFog,");
         num_floats += 4;
         has_fog = true;
     }
     for (int i = 0; i < num_inputs; i++) {
+        vs_len += sprintf(vs_buf + vs_len, "float%d aInput%d,\n", opt_alpha ? 4 : 3, i + 1, i + 2);
         num_floats += opt_alpha ? 4 : 3;
     }
+    if (used_textures[0] || used_textures[1]) {
+        append_line(vs_buf, &vs_len, "out float2 vTexCoord : TEXCOORD0,");
+    }
+    if (opt_fog) {
+        append_line(vs_buf, &vs_len, "out float4 vFog : TEXCOORD1,");
+    }
+    for (int i = 0; i < num_inputs; i++) {
+        vs_len += sprintf(vs_buf + vs_len, "out float%d vInput%d : TEXCOORD%d,\n", opt_alpha ? 4 : 3,
+                          i + 1, i + 2);
+    }
+    vs_buf[vs_len - 2] = ' ';
+    append_line(vs_buf, &vs_len, ") : POSITION \n{");
+    if (used_textures[0] || used_textures[1]) {
+        append_line(vs_buf, &vs_len, "vTexCoord = aTexCoord;");
+    }
+    if (opt_fog) {
+        append_line(vs_buf, &vs_len, "vFog = aFog;");
+    }
+    for (int i = 0; i < num_inputs; i++) {
+        vs_len += sprintf(vs_buf + vs_len, "vInput%d = aInput%d;\n", i + 1, i + 1);
+    }
+    append_line(vs_buf, &vs_len, "return aVtxPos;");
+    append_line(vs_buf, &vs_len, "}");
 
-    char filename[64];
+    // Fragment shader.
+    append_line(fs_buf, &fs_len, "float4 main(");
+    if (used_textures[0] || used_textures[1]) {
+        append_line(fs_buf, &fs_len, "float2 vTexCoord : TEXCOORD0,");
+    }
+    if (opt_fog) {
+        append_line(fs_buf, &fs_len, "float4 vFog : TEXCOORD1,");
+    }
+    for (int i = 0; i < num_inputs; i++) {
+        fs_len += sprintf(fs_buf + fs_len, "float%d vInput%d : TEXCOORD%d,\n", opt_alpha ? 4 : 3, i + 1,
+                          i + 2);
+    }
+    if (used_textures[0]) {
+        append_line(fs_buf, &fs_len, "uniform sampler2D uTex0 : TEXUNIT0,");
+    }
+    if (used_textures[1]) {
+        append_line(fs_buf, &fs_len, "uniform sampler2D uTex1 : TEXUNIT1,");
+    }
+    fs_buf[fs_len - 2] = ' ';
+    append_line(fs_buf, &fs_len, ") : COLOR \n{");
 
-    sprintf(filename, "app0:shaders/%08X_v.cg", shader_id);
+    if (used_textures[0]) {
+        append_line(fs_buf, &fs_len, "float4 texVal0 = tex2D(uTex0, vTexCoord);");
+    }
+    if (used_textures[1]) {
+        append_line(fs_buf, &fs_len, "float4 texVal1 = tex2D(uTex1, vTexCoord);");
+    }
 
-    FILE *fd = fopen(filename, "rb");
-    fseek(fd, 0, SEEK_END);
-    vs_len = ftell(fd);
-    fseek(fd, 0, SEEK_SET);
-    fread(vs_buf, vs_len, 1, fd);
-    fclose(fd);
+    append_str(fs_buf, &fs_len, opt_alpha ? "float4 texel = " : "float3 texel = ");
+    if (!color_alpha_same && opt_alpha) {
+        append_str(fs_buf, &fs_len, "float4(");
+        append_formula(fs_buf, &fs_len, c, do_single[0], do_multiply[0], do_lerp[0], false, false,
+                       true);
+        append_str(fs_buf, &fs_len, ", ");
+        append_formula(fs_buf, &fs_len, c, do_single[1], do_multiply[1], do_lerp[1], true, true, true);
+        append_str(fs_buf, &fs_len, ")");
+    } else {
+        append_formula(fs_buf, &fs_len, c, do_single[0], do_multiply[0], do_lerp[0], opt_alpha, false,
+                       opt_alpha);
+    }
+    append_line(fs_buf, &fs_len, ";");
+
+    if (opt_texture_edge && opt_alpha) {
+        append_line(fs_buf, &fs_len, "if (texel.a > 0.3) texel.a = 1.0; else discard;");
+    }
+    // TODO discard if alpha is 0?
+    if (opt_fog) {
+        if (opt_alpha) {
+            append_line(fs_buf, &fs_len, "texel = float4(lerp(texel.rgb, vFog.rgb, vFog.a), texel.a);");
+        } else {
+            append_line(fs_buf, &fs_len, "texel = lerp(texel, vFog.rgb, vFog.a);");
+        }
+    }
+
+    if (opt_alpha) {
+        append_line(fs_buf, &fs_len, "return texel;");
+    } else {
+        append_line(fs_buf, &fs_len, "return float4(texel, 1.0);");
+    }
+    append_line(fs_buf, &fs_len, "}");
+
     vs_buf[vs_len] = '\0';
-
-    sprintf(filename, "app0:shaders/%08X_f.cg", shader_id);
-
-    fd = fopen(filename, "rb");
-    fseek(fd, 0, SEEK_END);
-    fs_len = ftell(fd);
-    fseek(fd, 0, SEEK_SET);
-    fread(fs_buf, fs_len, 1, fd);
-    fclose(fd);
     fs_buf[fs_len] = '\0';
 
     const GLchar *sources[2] = { vs_buf, fs_buf };
@@ -409,28 +480,17 @@ static void gfx_vitagl_finish_render() {
 }
 
 struct GfxRenderingAPI gfx_vitagl_api = {
-    gfx_vitagl_z_is_from_0_to_1,
-    gfx_vitagl_unload_shader,
-    gfx_vitagl_load_shader,
-    gfx_vitagl_create_and_load_new_shader,
-    gfx_vitagl_lookup_shader,
-    gfx_vitagl_shader_get_info,
-    gfx_vitagl_new_texture,
-    gfx_vitagl_select_texture,
-    gfx_vitagl_upload_texture,
-    gfx_vitagl_set_sampler_parameters,
-    gfx_vitagl_set_depth_test,
-    gfx_vitagl_set_depth_mask,
-    gfx_vitagl_set_zmode_decal,
-    gfx_vitagl_set_viewport,
-    gfx_vitagl_set_scissor,
-    gfx_vitagl_set_use_alpha,
-    gfx_vitagl_draw_triangles,
-    gfx_vitagl_init,
-    gfx_vitagl_on_resize,
-    gfx_vitagl_start_frame,
-    gfx_vitagl_end_frame,
-    gfx_vitagl_finish_render
+    gfx_vitagl_z_is_from_0_to_1, gfx_vitagl_unload_shader,
+    gfx_vitagl_load_shader,      gfx_vitagl_create_and_load_new_shader,
+    gfx_vitagl_lookup_shader,    gfx_vitagl_shader_get_info,
+    gfx_vitagl_new_texture,      gfx_vitagl_select_texture,
+    gfx_vitagl_upload_texture,   gfx_vitagl_set_sampler_parameters,
+    gfx_vitagl_set_depth_test,   gfx_vitagl_set_depth_mask,
+    gfx_vitagl_set_zmode_decal,  gfx_vitagl_set_viewport,
+    gfx_vitagl_set_scissor,      gfx_vitagl_set_use_alpha,
+    gfx_vitagl_draw_triangles,   gfx_vitagl_init,
+    gfx_vitagl_on_resize,        gfx_vitagl_start_frame,
+    gfx_vitagl_end_frame,        gfx_vitagl_finish_render
 };
 
 #endif

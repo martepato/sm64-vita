@@ -1,4 +1,3 @@
-// Black background shader. Also used for some transparent 3D stuff
 float4 main(
 	float4 aVtxPos,
 	float4 aInput1,
@@ -8,8 +7,5 @@ float4 main(
 {
 	vInput1 = aInput1;
 
-	if(vInput1.a == 1.0 && (vInput1.xyz == float3(1.0, 1.0, 1.0) || vInput1.xyz == float3(0.0, 0.0, 0.0))) // HACK
-			return float4(aVtxPos.xy, -aVtxPos.z, aVtxPos.w);
-	else
-		return aVtxPos;
+	return aVtxPos;
 }

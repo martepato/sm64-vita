@@ -875,7 +875,6 @@ vpk: $(EXE)
 	@vita-mksfoex -s TITLE_ID="$(VITA_TITLEID)" "$(VITA_APPNAME)" $(BUILD_DIR)/sce_sys/param.sfo
 	@vita-pack-vpk -s $(BUILD_DIR)/sce_sys/param.sfo -b $(BUILD_DIR)/eboot.bin \
 		--add $(BUILD_DIR)/sce_sys=sce_sys \
-    --add $(BUILD_DIR)/shaders=shaders \
 		$(EXE).vpk
 
 .PHONY: all clean distclean default diff test load libultra

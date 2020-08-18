@@ -1,4 +1,3 @@
-// Used for some textured 3D objects. Also used for the messed up skybox.
 float4 main(
 	float4 aVtxPos,
 	float2 aTexCoord,
@@ -11,8 +10,5 @@ float4 main(
 	vTexCoord = aTexCoord;
 	vInput1 = aInput1;
 
-	if(vInput1.a == 1) // HACK
-		return float4(aVtxPos.xy, 1.0, aVtxPos.w);
-	else
-		return aVtxPos;
+	return aVtxPos;
 }
