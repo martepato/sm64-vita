@@ -1233,22 +1233,38 @@ static void gfx_draw_rectangle(int32_t ulx, int32_t uly, int32_t lrx, int32_t lr
     
     ul->x = ulxf;
     ul->y = ulyf;
+#ifndef TARGET_VITA
     ul->z = -1.0f;
+#else
+    ul->z = 1.0f;
+#endif
     ul->w = 1.0f;
     
     ll->x = ulxf;
     ll->y = lryf;
+#ifndef TARGET_VITA
     ll->z = -1.0f;
+#else
+    ll->z = 1.0f;
+#endif
     ll->w = 1.0f;
     
     lr->x = lrxf;
     lr->y = lryf;
+#ifndef TARGET_VITA
     lr->z = -1.0f;
+#else
+    lr->z = 1.0f;
+#endif
     lr->w = 1.0f;
     
     ur->x = lrxf;
     ur->y = ulyf;
+#ifndef TARGET_VITA
     ur->z = -1.0f;
+#else
+    ur->z = 1.0f;
+#endif
     ur->w = 1.0f;
     
     // The coordinates for texture rectangle shall bypass the viewport setting
