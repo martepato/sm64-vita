@@ -8,7 +8,6 @@
 #define DISPLAY_WIDTH 960
 #define DISPLAY_HEIGHT 544
 
-// TODO: figure out if this shit even works
 #ifdef VERSION_EU
     #define FRAMERATE 25
 #else
