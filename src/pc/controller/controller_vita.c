@@ -6,7 +6,7 @@
 
 #include "controller_api.h"
 
-#define DEADZONE 4960
+#define DEADZONE 20
 
 static void vita_init(void) {
     sceCtrlSetSamplingMode(SCE_CTRL_MODE_ANALOG_WIDE);
@@ -39,6 +39,13 @@ static void vita_read(OSContPad *pad) {
 
     pad->stick_x = (s8)((s32) ctrl.lx - 128);
     pad->stick_y = (s8)(-((s32) ctrl.ly - 127));
+
+    // Taken from SDL controller backend.
+    uint32_t magnitude_sq = (uint32_t)(pad->stick_x * pad->stick_x) + (uint32_t)(pad->stick_y * pad->stick_y);
+    if (magnitude_sq < (uint32_t)(DEADZONE * DEADZONE)) {
+        pad->stick_x = 0;
+        pad->stick_y = 0;
+    }
 
     if (ctrl.rx < 40)
         pad->button |= L_CBUTTONS;

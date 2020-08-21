@@ -5,7 +5,7 @@
 
 #include "audio_api.h"
 
-#define AUDIO_SIZE 1024
+#define AUDIO_SIZE 1088
 #define AUDIO_RATE 32000
 
 int chan = -1;
