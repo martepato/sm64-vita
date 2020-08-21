@@ -23,8 +23,8 @@ Savedata is stored at `ux0:data/sm64_save_file.bin`. `cont.m64` can be put into 
 
 ## Issues
 
-1. Sound is not great, crackling sometimes occurs.
-2. At the start of the game with Princess Peach, when the camera zooms out the skybox seems to disappear. It is only temporary.
+1. At the start of the game with Princess Peach, when the camera zooms out the skybox seems to disappear. It is only temporary.
+2. The fade transition from the star select menu seems to have a minor bug, the white background disappears as it fades into white.
 
 ## Contributing
 
