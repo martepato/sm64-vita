@@ -14,17 +14,19 @@ For running this on the PS Vita you will first need to extract the runtime shade
 
 Savedata is stored at `ux0:data/sm64_save_file.bin`. `cont.m64` can be put into the same folder for TAS input.
 
-1. Install prerequisites (Ubuntu): `sudo apt install -y git build-essential pkg-config`.
-2. Install [VitaSDK](https://vitasdk.org)
-3. Clone the repo: `git clone https://github.com/bythos14/sm64-vita.git`, which will create a directory `sm64-vita` and then **enter** it `cd sm64-vita`.
-4. Place a Super Mario 64 ROM called `baserom.<VERSION>.z64` into the repository's root directory for asset extraction, where `VERSION` can be `us`, `jp`, or `eu`.
-5. Run `./build_vita.sh` to build and install dependencies and build the game.
-6. The installable vpk will be located at `build/us_vita/sm64.<VERSION>.f3dex2e.vpk`
+1. Install [VitaSDK](https://vitasdk.org)
+2. Clone the repo: `git clone https://github.com/bythos14/sm64-vita.git`, which will create a directory `sm64-vita` and then **enter** it `cd sm64-vita`.
+3. Place a Super Mario 64 ROM called `baserom.<VERSION>.z64` into the repository's root directory for asset extraction, where `VERSION` can be `us`, `jp`, or `eu`.
+4. Building
+    1. Run `./build_deps.sh` to build and install dependencies. This only has to be done once.
+    2. Run `make TARGET_VITA=1 vpk` to build the game. Add `-j4` to improve build time.
+5. The installable vpk will be located at `build/us_vita/sm64.<VERSION>.f3dex2e.vpk`
 
-## Issues
+## Known Issues
 
 1. At the start of the game with Princess Peach, when the camera zooms out the skybox seems to disappear. It is only temporary.
 2. The fade transition from the star select menu seems to have a minor bug, the white background disappears as it fades into white.
+3. TAS Input stops working if the app is suspended or the Vita is put to sleep.
 
 ## Contributing
 

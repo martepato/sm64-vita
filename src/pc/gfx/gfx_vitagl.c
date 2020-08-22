@@ -13,6 +13,7 @@
 #include <vitaGL.h>
 
 #include <psp2/io/fcntl.h>
+#include <psp2/message_dialog.h>
 
 #include "gfx_cc.h"
 #include "gfx_rendering_api.h"
@@ -39,6 +40,32 @@ static struct ShaderProgram *cur_shader = NULL;
 
 static uint32_t frame_count;
 static uint32_t window_height;
+
+void check_for_shader_compiler() {
+    if(!vglHasRuntimeShaderCompiler()) {
+        SceMsgDialogParam param;
+        sceMsgDialogParamInit(&param);
+
+        SceMsgDialogUserMessageParam user_msg;
+        memset(&user_msg, 0, sizeof(SceMsgDialogUserMessageParam));
+        user_msg.msg =  "You do not have the runtime shader compiler installed. It must be installed to run this program.\n\n"
+                        "Please check the README.md in the repository for a link to instructions on installing it.";
+        user_msg.buttonType = SCE_MSG_DIALOG_BUTTON_TYPE_OK;
+
+        param.userMsgParam = &user_msg;
+        param.mode = SCE_MSG_DIALOG_MODE_USER_MSG;
+        sceMsgDialogInit(&param);
+
+        while (sceMsgDialogGetStatus() != SCE_COMMON_DIALOG_STATUS_FINISHED) {
+            vglStartRendering();
+            glClear(GL_COLOR_BUFFER_BIT);
+            vglStopRenderingInit();
+            vglUpdateCommonDialog();
+            vglStopRenderingTerm();
+        }
+        sceKernelExitProcess(0);
+    }
+}
 
 static bool gfx_vitagl_z_is_from_0_to_1(void) {
     return false;
@@ -457,6 +484,8 @@ static void gfx_vitagl_init(void) {
     vglWaitVblankStart(GL_TRUE);
 
     vglInitExtended(0x800000, 960, 544, 0x8000000, SCE_GXM_MULTISAMPLE_4X);
+    
+    check_for_shader_compiler();
 
     vglIndexPointerMapped(vgl_indices);
 

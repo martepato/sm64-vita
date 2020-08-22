@@ -1,9 +1,13 @@
 #!/bin/bash
+set -x
+ sudo apt install -y git build-essential pkg-config
+set +x
 
 mkdir deps
 cd deps
 
 # Build and install vitaGL, mathneon and vitaShaRK
+
 git clone https://github.com/Rinnegatamante/vitaGL.git
 cd vitaGL
 make HAVE_SBRK=1 HAVE_SHARK=1 install -j4
@@ -23,6 +27,6 @@ make install
 cd ..
 cp shacccg.h $VITASDK/arm-vita-eabi/include/psp2/shacccg.h
 make install
-cd ../../
 
-make TARGET_VITA=1 vpk -j4
+cd ../../
+rm -rf deps

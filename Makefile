@@ -484,10 +484,10 @@ ifeq ($(TARGET_VITA),1)
   PLATFORM_CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -Wfatal-errors -fsigned-char -DTARGET_VITA -D__vita__
   PLATFORM_LDFLAGS := -Wl,-q \
     -lvitaGL -lvitashark \
-    -lSceLibKernel_stub -lScePvf_stub -lmathneon -lSceAppMgr_stub \
-    -lSceSysmodule_stub -lSceCtrl_stub -lSceTouch_stub -lm -lSceNet_stub \
-    -lSceNetCtl_stub -lSceAppUtil_stub -lc -lScePower_stub -lSceCommonDialog_stub \
-    -lSceAudio_stub -lSceShaccCg_stub -lSceGxm_stub -lSceDisplay_stub -lSceNet_stub -lSceNetCtl_stub
+    -lScePvf_stub -lmathneon -lSceAppMgr_stub \
+    -lSceSysmodule_stub -lSceCtrl_stub -lSceTouch_stub -lm \
+    -lSceAppUtil_stub -lc -lScePower_stub -lSceCommonDialog_stub \
+    -lSceAudio_stub -lSceShaccCg_stub -lSceGxm_stub -lSceDisplay_stub
 endif
 
 PLATFORM_CFLAGS += -DNO_SEGMENTED_MEMORY -DUSE_SYSTEM_MALLOC
