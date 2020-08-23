@@ -8,6 +8,8 @@ static FILE *fp;
 static void tas_init(void) {
     #ifdef TARGET_VITA
     fp = fopen("ux0:data/cont.m64", "rb");
+    if(fp == NULL)
+        fp = fopen("app0:cont.m64", "rb");
     #else
     fp = fopen("cont.m64", "rb");
     #endif

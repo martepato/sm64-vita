@@ -12,7 +12,7 @@ A prior copy of the game is required to extract the assets.
 
 For running this on the PS Vita you will first need to extract the runtime shader compiler. Follow this [guide](https://samilops2.gitbook.io/vita-troubleshooting-guide/shader-compiler/extract-libshacccg.suprx) for help with that.
 
-Savedata is stored at `ux0:data/sm64_save_file.bin`. `cont.m64` can be put into the same folder for TAS input.
+Savedata is stored at `ux0:data/sm64_save_file.bin`. `cont.m64` can be put either into the same folder, or into `ux0:app/SM6400001/` for TAS input.
 
 1. Install [VitaSDK](https://vitasdk.org)
 2. Clone the repo: `git clone https://github.com/bythos14/sm64-vita.git`, which will create a directory `sm64-vita` and then **enter** it `cd sm64-vita`.
