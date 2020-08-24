@@ -1,3 +1,17 @@
+diff --git a/include/platform_info.h b/include/platform_info.h
+index 310aa4d..77f4fac 100644
+--- a/include/platform_info.h
++++ b/include/platform_info.h
+@@ -10,6 +10,8 @@
+ #define IS_BIG_ENDIAN (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+ #endif
+ 
+-#define DOUBLE_SIZE_ON_64_BIT(size) ((size) * (sizeof(void *) / 4))
++// Using 8 here instead of sizeof(size_t) to ensure compatibility
++#define SIZEOF_POINTER (size_t) 8
++#define DOUBLE_SIZE_ON_64_BIT(size) ((size) * (SIZEOF_POINTER / 4))
+ 
+ #endif // PLATFORM_INFO_H
 diff --git a/include/types.h b/include/types.h
 index a33dc72..18887a4 100644
 --- a/include/types.h
@@ -607,6 +621,22 @@ index 7a83b53..f4acc2d 100644
  };
  
  extern s8 gEnvFxMode;
+diff --git a/src/game/game_init.h b/src/game/game_init.h
+index 4384cbc..eb8924f 100644
+--- a/src/game/game_init.h
++++ b/src/game/game_init.h
+@@ -9,7 +9,11 @@
+ #include "types.h"
+ #include "memory.h"
+ 
++#ifdef TARGET_N64
+ #define GFX_POOL_SIZE 6400
++#else
++#define GFX_POOL_SIZE 64000
++#endif
+ 
+ struct GfxPool {
+     Gfx buffer[GFX_POOL_SIZE];
 diff --git a/src/game/hud.c b/src/game/hud.c
 index 8d4daa5..7ce2b22 100644
 --- a/src/game/hud.c
@@ -1807,7 +1837,7 @@ index 3673a1a..e65c3bd 100644
      switch (transType) {
          case WARP_TRANSITION_FADE_FROM_COLOR:
 diff --git a/src/menu/intro_geo.c b/src/menu/intro_geo.c
-index 2d49d06..31cb72f 100644
+index d2aea96..e821724 100644
 --- a/src/menu/intro_geo.c
 +++ b/src/menu/intro_geo.c
 @@ -1,5 +1,6 @@
@@ -1858,6 +1888,19 @@ index 2d49d06..31cb72f 100644
          gSPMatrix(displayListIter++, scaleMat, G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_PUSH);
          gSPDisplayList(displayListIter++, &intro_seg7_dl_0700B3A0);
          gSPPopMatrix(displayListIter++, G_MTX_MODELVIEW);
+diff --git a/src/pc/audio/audio_vita.c b/src/pc/audio/audio_vita.c
+index 3a898c1..9eef4be 100644
+--- a/src/pc/audio/audio_vita.c
++++ b/src/pc/audio/audio_vita.c
+@@ -5,7 +5,7 @@
+ 
+ #include "audio_api.h"
+ 
+-#define AUDIO_SIZE 1088
++#define AUDIO_SIZE 1024
+ #define AUDIO_RATE 32000
+ 
+ int chan = -1;
 diff --git a/src/pc/gfx/gfx_dxgi.cpp b/src/pc/gfx/gfx_dxgi.cpp
 index 02cdd81..c036e0b 100644
 --- a/src/pc/gfx/gfx_dxgi.cpp
@@ -1931,12 +1974,12 @@ index 4fd5c43..7897c6b 100644
      Uint32 elapsed = SDL_GetTicks() - last_time;
  
 diff --git a/src/pc/gfx/gfx_vita.c b/src/pc/gfx/gfx_vita.c
-index 0aa3570..012c4ee 100644
+index 05b06b6..6b46736 100644
 --- a/src/pc/gfx/gfx_vita.c
 +++ b/src/pc/gfx/gfx_vita.c
-@@ -10,9 +10,9 @@
+@@ -9,9 +9,9 @@
+ #define DISPLAY_HEIGHT 544
  
- // TODO: figure out if this shit even works
  #ifdef VERSION_EU
 -    #define FRAMERATE 25
 +    #define FRAMERATE 50
@@ -1947,10 +1990,10 @@ index 0aa3570..012c4ee 100644
  
  static const uint64_t frametime = 1000000 / FRAMERATE;
 diff --git a/src/pc/pc_main.c b/src/pc/pc_main.c
-index abb3d9f..22939bd 100644
+index 188c71d..e845c40 100644
 --- a/src/pc/pc_main.c
 +++ b/src/pc/pc_main.c
-@@ -80,6 +80,25 @@ void send_display_list(struct SPTask *spTask) {
+@@ -84,6 +84,25 @@ void send_display_list(struct SPTask *spTask) {
  #define SAMPLES_LOW 528
  #endif
  
@@ -1976,7 +2019,7 @@ index abb3d9f..22939bd 100644
  void produce_one_frame(void) {
      gfx_start_frame();
      game_loop_one_iteration();
-@@ -99,6 +118,11 @@ void produce_one_frame(void) {
+@@ -103,6 +122,11 @@ void produce_one_frame(void) {
      audio_api->play((u8 *)audio_buffer, 2 * num_audio_samples * 4);
      
      gfx_end_frame();
@@ -1988,3 +2031,14 @@ index abb3d9f..22939bd 100644
  }
  
  #ifdef TARGET_WEB
+@@ -147,8 +171,8 @@ static void on_fullscreen_changed(bool is_now_fullscreen) {
+ }
+ 
+ void main_func(void) {
+-    static u64 pool[0x165000/8 / 4 * sizeof(void *)];
+-    main_pool_init(pool, pool + sizeof(pool) / sizeof(pool[0]));
++    static u8 pool[DOUBLE_SIZE_ON_64_BIT(0x165000)] __attribute__((aligned(16)));
++    main_pool_init(pool, pool + sizeof(pool));
+     gEffectsMemoryPool = mem_pool_init(0x4000, MEMORY_POOL_LEFT);
+ 
+     configfile_load(CONFIG_FILE);
