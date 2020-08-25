@@ -9,11 +9,15 @@ This repo does not include all assets necessary for compiling the game.
 A prior copy of the game is required to extract the assets.
 
 ## Building for the Vita
-
-For running this on the PS Vita you will first need to extract the runtime shader compiler. Follow this [guide](https://samilops2.gitbook.io/vita-troubleshooting-guide/shader-compiler/extract-libshacccg.suprx) for help with that.
-
 Savedata is stored at `ux0:data/sm64_save_file.bin`. `cont.m64` can be put either into the same folder, or into `ux0:app/SM6400001/` for TAS input.
 
+### Prerequisites
+For running this on the PS Vita you will first need to extract the runtime shader compiler. Follow this [guide](https://samilops2.gitbook.io/vita-troubleshooting-guide/shader-compiler/extract-libshacccg.suprx) for help with that.
+
+- Ubuntu: `sudo apt install -y git build-essential pkg-config`.
+- Windows (x86_64): `pacman -S git make python3 mingw-w64-x86_64-gcc`
+
+### Build Instructions
 1. Install [VitaSDK](https://vitasdk.org)
 2. Clone the repo: `git clone https://github.com/bythos14/sm64-vita.git`, which will create a directory `sm64-vita` and then **enter** it `cd sm64-vita`.
 3. Place a Super Mario 64 ROM called `baserom.<VERSION>.z64` into the repository's root directory for asset extraction, where `VERSION` can be `us`, `jp`, or `eu`.

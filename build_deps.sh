@@ -1,7 +1,4 @@
 #!/bin/bash
-set -x
- sudo apt install -y git build-essential pkg-config
-set +x
 
 mkdir deps
 cd deps
