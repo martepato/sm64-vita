@@ -438,7 +438,7 @@ ifeq ($(TARGET_VITA),1)
   CROSS := arm-vita-eabi-
   OPT_FLAGS += -mtune=cortex-a9 -mfpu=neon
   VITA_APPNAME := Super Mario 64 PC
-  VITA_TITLEID := SM6400001
+  VITA_TITLEID := PCSE64001
 
   AS        := $(CROSS)as
   CC        := $(CROSS)gcc
