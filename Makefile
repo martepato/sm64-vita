@@ -490,7 +490,12 @@ ifeq ($(TARGET_VITA),1)
     -lSceAudio_stub -lSceShaccCg_stub -lSceGxm_stub -lSceDisplay_stub
 endif
 
+# Disable system malloc usage on vita.
+ifeq ($(TARGET_VITA),1)
+PLATFORM_CFLAGS += -DNO_SEGMENTED_MEMORY
+else
 PLATFORM_CFLAGS += -DNO_SEGMENTED_MEMORY -DUSE_SYSTEM_MALLOC
+endif
 
 # Compiler and linker flags for graphics backend
 ifeq ($(ENABLE_OPENGL),1)
