@@ -1,5 +1,5 @@
 diff --git a/include/types.h b/include/types.h
-index a33dc72..18887a4 100644
+index 5132a4e..f5a441d 100644
 --- a/include/types.h
 +++ b/include/types.h
 @@ -117,6 +117,10 @@ struct AnimInfo
@@ -48,7 +48,7 @@ index a33dc72..18887a4 100644
  
  struct MarioBodyState
 diff --git a/src/engine/graph_node.h b/src/engine/graph_node.h
-index a680f70..a31bb8a 100644
+index 22ab70c..cf566a1 100644
 --- a/src/engine/graph_node.h
 +++ b/src/engine/graph_node.h
 @@ -109,6 +109,8 @@ struct GraphNodePerspective
@@ -112,7 +112,7 @@ index a680f70..a31bb8a 100644
  
  /** A node that allows an object to specify a different culling radius than the
 diff --git a/src/engine/surface_collision.c b/src/engine/surface_collision.c
-index 9aff62f..9c062cf 100644
+index 69f40c9..9118d88 100644
 --- a/src/engine/surface_collision.c
 +++ b/src/engine/surface_collision.c
 @@ -7,6 +7,7 @@
@@ -232,7 +232,7 @@ index 9aff62f..9c062cf 100644
          break;
      }
 diff --git a/src/engine/surface_load.c b/src/engine/surface_load.c
-index 6936d8a..b2b7b37 100644
+index e6551b2..6593601 100644
 --- a/src/engine/surface_load.c
 +++ b/src/engine/surface_load.c
 @@ -14,6 +14,7 @@
@@ -256,7 +256,7 @@ index 6936d8a..b2b7b37 100644
      surface->vertex2[0] = x2;
      surface->vertex3[0] = x3;
 diff --git a/src/game/camera.c b/src/game/camera.c
-index 60bfb86..fd91026 100644
+index 8082ef5..fb56982 100644
 --- a/src/game/camera.c
 +++ b/src/game/camera.c
 @@ -483,6 +483,10 @@ CameraTransition sModeTransitions[] = {
@@ -608,21 +608,21 @@ index 7a83b53..f4acc2d 100644
  
  extern s8 gEnvFxMode;
 diff --git a/src/game/game_init.h b/src/game/game_init.h
-index 4384cbc..eb8924f 100644
+index 730faeb..adc4da4 100644
 --- a/src/game/game_init.h
 +++ b/src/game/game_init.h
-@@ -9,7 +9,11 @@
- #include "types.h"
- #include "memory.h"
- 
+@@ -12,7 +12,11 @@
+ #ifdef USE_SYSTEM_MALLOC
+ #define GFX_POOL_SIZE 1
+ #else
 +#ifdef TARGET_N64
  #define GFX_POOL_SIZE 6400
 +#else
 +#define GFX_POOL_SIZE 64000
 +#endif
+ #endif
  
  struct GfxPool {
-     Gfx buffer[GFX_POOL_SIZE];
 diff --git a/src/game/hud.c b/src/game/hud.c
 index 8d4daa5..7ce2b22 100644
 --- a/src/game/hud.c
@@ -674,7 +674,7 @@ index 8d4daa5..7ce2b22 100644
      gSPMatrix(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(mtx++),
                G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_PUSH);
 diff --git a/src/game/ingame_menu.c b/src/game/ingame_menu.c
-index b9a43df..281e0f3 100644
+index 35df1cf..7b82744 100644
 --- a/src/game/ingame_menu.c
 +++ b/src/game/ingame_menu.c
 @@ -111,6 +111,41 @@ u8 gMenuHoldKeyIndex = 0;
@@ -757,7 +757,7 @@ index b9a43df..281e0f3 100644
  #endif
      }
 diff --git a/src/game/level_geo.c b/src/game/level_geo.c
-index 4c98e70..abc5121 100644
+index 1fc4b88..088a679 100644
 --- a/src/game/level_geo.c
 +++ b/src/game/level_geo.c
 @@ -34,12 +34,16 @@ Gfx *geo_envfx_main(s32 callContext, struct GraphNode *node, Mat4 mtxf) {
@@ -778,7 +778,7 @@ index 4c98e70..abc5121 100644
              }
              SET_HIGH_U16_OF_32(*params, gAreaUpdateCounter);
 diff --git a/src/game/object_helpers.c b/src/game/object_helpers.c
-index 2cc0224..41a26bf 100644
+index 9b5e479..8468483 100644
 --- a/src/game/object_helpers.c
 +++ b/src/game/object_helpers.c
 @@ -1549,6 +1549,7 @@ void cur_obj_set_pos_to_home(void) {
@@ -790,7 +790,7 @@ index 2cc0224..41a26bf 100644
  
  void cur_obj_set_pos_to_home_and_stop(void) {
 diff --git a/src/game/paintings.c b/src/game/paintings.c
-index 205a9ea..9583c64 100644
+index 83bd2ce..f39836d 100644
 --- a/src/game/paintings.c
 +++ b/src/game/paintings.c
 @@ -189,6 +189,32 @@ struct Painting **sPaintingGroups[] = {
@@ -867,7 +867,7 @@ index 205a9ea..9583c64 100644
      // Update the ripple, may automatically reset the painting's state.
      painting_update_ripple_state(painting);
 diff --git a/src/game/rendering_graph_node.c b/src/game/rendering_graph_node.c
-index 80dbfca..b083717 100644
+index 1f94b56..b2a711d 100644
 --- a/src/game/rendering_graph_node.c
 +++ b/src/game/rendering_graph_node.c
 @@ -39,6 +39,8 @@
@@ -1702,7 +1702,7 @@ index 80dbfca..b083717 100644
                    G_MTX_MODELVIEW | G_MTX_LOAD | G_MTX_NOPUSH);
          gCurGraphNodeRoot = node;
 diff --git a/src/game/screen_transition.c b/src/game/screen_transition.c
-index 3673a1a..e65c3bd 100644
+index 5d36905..36e9c92 100644
 --- a/src/game/screen_transition.c
 +++ b/src/game/screen_transition.c
 @@ -16,6 +16,19 @@
@@ -1887,23 +1887,6 @@ index 3a898c1..9eef4be 100644
  #define AUDIO_RATE 32000
  
  int chan = -1;
-diff --git a/src/pc/gfx/gfx_dxgi.cpp b/src/pc/gfx/gfx_dxgi.cpp
-index 02cdd81..c036e0b 100644
---- a/src/pc/gfx/gfx_dxgi.cpp
-+++ b/src/pc/gfx/gfx_dxgi.cpp
-@@ -34,10 +34,10 @@
- 
- #ifdef VERSION_EU
- #define FRAME_INTERVAL_US_NUMERATOR 40000
--#define FRAME_INTERVAL_US_DENOMINATOR 1
-+#define FRAME_INTERVAL_US_DENOMINATOR 2
- #else
- #define FRAME_INTERVAL_US_NUMERATOR 100000
--#define FRAME_INTERVAL_US_DENOMINATOR 3
-+#define FRAME_INTERVAL_US_DENOMINATOR 6
- #endif
- 
- using namespace Microsoft::WRL; // For ComPtr
 diff --git a/src/pc/gfx/gfx_glx.c b/src/pc/gfx/gfx_glx.c
 index 5f5dd87..1329287 100644
 --- a/src/pc/gfx/gfx_glx.c
@@ -1976,10 +1959,10 @@ index 05b06b6..6b46736 100644
  
  static const uint64_t frametime = 1000000 / FRAMERATE;
 diff --git a/src/pc/pc_main.c b/src/pc/pc_main.c
-index c7aebdb..e845c40 100644
+index f68e31a..892160d 100644
 --- a/src/pc/pc_main.c
 +++ b/src/pc/pc_main.c
-@@ -84,6 +84,25 @@ void send_display_list(struct SPTask *spTask) {
+@@ -85,6 +85,25 @@ void send_display_list(struct SPTask *spTask) {
  #define SAMPLES_LOW 528
  #endif
  
@@ -2005,7 +1988,7 @@ index c7aebdb..e845c40 100644
  void produce_one_frame(void) {
      gfx_start_frame();
      game_loop_one_iteration();
-@@ -103,6 +122,11 @@ void produce_one_frame(void) {
+@@ -104,6 +123,11 @@ void produce_one_frame(void) {
      audio_api->play((u8 *)audio_buffer, 2 * num_audio_samples * 4);
      
      gfx_end_frame();
