@@ -151,7 +151,7 @@ void main_func(void) {
     main_pool_init();
     gGfxAllocOnlyPool = alloc_only_pool_init();
 #else
-    static u8 pool[DOUBLE_SIZE_ON_64_BIT(0x165000)] __attribute__((aligned(16)));
+    static u8 pool[DOUBLE_SIZE_ON_64_BIT(0x165000)] __attribute__ ((aligned(64)));
     main_pool_init(pool, pool + sizeof(pool));
 #endif
     gEffectsMemoryPool = mem_pool_init(0x4000, MEMORY_POOL_LEFT);
