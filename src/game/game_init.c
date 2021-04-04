@@ -614,6 +614,12 @@ void thread5_game_loop(UNUSED void *arg) {
     rendering_init();
 
     while (TRUE) {
+#else
+    gGlobalTimer++;
+}
+
+void game_loop_one_iteration(void) {
+#endif
         // if the reset timer is active, run the process to reset the game.
         if (gResetTimer) {
             draw_reset_bars();
