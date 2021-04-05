@@ -28,9 +28,7 @@ For running this on the PS Vita you will first need to extract the runtime shade
 
 ## Known Issues
 
-1. At the start of the game with Princess Peach, when the camera zooms out the skybox seems to disappear. It is only temporary.
-2. The fade transition from the star select menu seems to have a minor bug, the white background disappears as it fades into white.
-3. TAS Input stops working if the app is suspended or the Vita is put to sleep.
+1. TAS Input stops working if the app is suspended or the Vita is put to sleep.
 
 ## Contributing
 
