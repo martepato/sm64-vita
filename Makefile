@@ -293,10 +293,6 @@ endif
 GENERATED_C_FILES := $(BUILD_DIR)/assets/mario_anim_data.c $(BUILD_DIR)/assets/demo_data.c \
   $(addprefix $(BUILD_DIR)/bin/,$(addsuffix _skybox.c,$(notdir $(basename $(wildcard textures/skyboxes/*.png)))))
 
-ifeq ($(TARGET_WINDOWS),0)
-  CXX_FILES :=
-endif
-
 ifneq ($(TARGET_N64),1)
   ULTRA_C_FILES := \
     alBnkfNew.c \
@@ -456,10 +452,10 @@ else
   else
     CC := emcc
   endif
-  ifeq ($(TARGET_WINDOWS),1)
-    LD := $(CXX)
-  else
+  ifeq ($(CXX_FILES),"")
     LD := $(CC)
+  else
+    LD := $(CXX)
   endif
   CPP := cpp -P
   OBJDUMP := objdump
@@ -491,7 +487,7 @@ ifeq ($(TARGET_VITA),1)
     -lSceIofilemgr_stub -lSceHid_stub -lSceMotion_stub -lm
 endif
 
-PLATFORM_CFLAGS += -DNO_SEGMENTED_MEMORY
+PLATFORM_CFLAGS += -DNO_SEGMENTED_MEMORY -DUSE_SYSTEM_MALLOC
 
 # Compiler and linker flags for graphics backend
 ifeq ($(ENABLE_OPENGL),1)
