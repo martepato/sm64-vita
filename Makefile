@@ -439,6 +439,7 @@ ifeq ($(TARGET_VITA),1)
   AS        := $(CROSS)as
   CC        := $(CROSS)gcc
   CPP       := $(CROSS)cpp -P
+  CXX       := $(CROSS)g++
   LD        := $(CROSS)g++
   AR        := $(CROSS)ar
   OBJDUMP   := $(CROSS)objdump
