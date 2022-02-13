@@ -22,9 +22,11 @@ For running this on the PS Vita you will first need to extract the runtime shade
 2. Clone the repo: `git clone https://github.com/martepato/sm64-vita.git`, which will create a directory `sm64-vita` and then **enter** it `cd sm64-vita`.
 3. Place a Super Mario 64 ROM called `baserom.<VERSION>.z64` into the repository's root directory for asset extraction, where `VERSION` can be `us`, `jp`, or `eu`.
 4. Building
-    1. Run `./build_deps.sh` to build and install dependencies. This only has to be done once.
-    2. Run `make TARGET_VITA=1 vpk` to build the game. Add `-j4` to improve build time.
+    1. Run `./build_deps.sh` to build and install old versions of VitaGL and vitaShaRK, needed to keep compatibility. This only has to be done once.
+    2. Run `make TARGET_VITA=1 vpk -j$(nproc)` to build the game.
 5. The installable vpk will be located at `build/us_vita/sm64.<VERSION>.f3dex2e.vpk`
+6. (OPTIONAL) If you need the latest versions of VitaGL and vitaShaRK to compile other projects, you can restore them by running `./restore_latest_deps.sh`.
+              Keep in mind that if you do this you need to rerun the `build_deps.sh` script to allow the compiling of this repo.
 
 ## Known Issues
 
