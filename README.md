@@ -1,4 +1,4 @@
-# Super Mario 64 Port
+# Super Mario 64 Port (Martepato's repo patches + FIX for new VitaSDK releases)
 
 - This repo contains a full decompilation of Super Mario 64 (J), (U), and (E) with minor exceptions in the audio subsystem.
 - Naming and documentation of the source code and data structures are in progress.
@@ -19,7 +19,7 @@ For running this on the PS Vita you will first need to extract the runtime shade
 
 ### Build Instructions
 1. Install [VitaSDK](https://vitasdk.org)
-2. Clone the repo: `git clone https://github.com/martepato/sm64-vita.git`, which will create a directory `sm64-vita` and then **enter** it `cd sm64-vita`.
+2. Clone the repo: `git clone https://github.com/nor2101/sm64-vita_newfix.git`, which will create a directory `sm64-vita` and then **enter** it `cd sm64-vita`.
 3. Place a Super Mario 64 ROM called `baserom.<VERSION>.z64` into the repository's root directory for asset extraction, where `VERSION` can be `us`, `jp`, or `eu`.
 4. Building
     1. Run `./build_deps.sh` to build and install old versions of VitaGL and vitaShaRK, needed to keep compatibility. This only has to be done once.
