@@ -1,8 +1,7 @@
 # Super Mario 64 Port
 
-- This repo contains a full decompilation of Super Mario 64 (J), (U), and (E) with minor exceptions in the audio subsystem.
+- This repo contains a full decompilation of Super Mario 64 (J), (U), (E), and (SH).
 - Naming and documentation of the source code and data structures are in progress.
-- Efforts to decompile the Shindou ROM steadily advance toward a matching build.
 - Beyond Nintendo 64, it can also target the PS Vita.
 
 This repo does not include all assets necessary for compiling the game.
@@ -24,7 +23,7 @@ For running this on the PS Vita you will first need to extract the runtime shade
 4. Building
     1. Run `./build_deps.sh` to build and install dependencies. This only has to be done once.
     2. Run `make TARGET_VITA=1 vpk` to build the game. Add `-j4` to improve build time.
-5. The installable vpk will be located at `build/us_vita/sm64.<VERSION>.f3dex2e.vpk`
+5. The installable vpk will be located at `build/us_vita/sm64.<VERSION>.vpk`
 
 ## Known Issues
 
