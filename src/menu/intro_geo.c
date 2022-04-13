@@ -165,7 +165,11 @@ static Gfx *intro_backdrop_one_image(s32 index, s8 *backgroundTable) {
     const u8 *const *vIntroBgTable = segmented_to_virtual(textureTables[backgroundTable[index]]);
     s32 i;
 
-    guTranslate(mtx, xCoords[index], yCoords[index], 0.0f);
+	#ifndef TARGET_VITA
+		guTranslate(mtx, xCoords[index], yCoords[index], 0.0f);
+	#else
+		guTranslate(mtx, xCoords[index], yCoords[index], -1.0f);
+	#endif
     gSPMatrix(displayListIter++, mtx, G_MTX_MODELVIEW | G_MTX_LOAD | G_MTX_PUSH);
     gSPDisplayList(displayListIter++, &title_screen_bg_dl_0A000118);
     for (i = 0; i < 4; ++i) {
