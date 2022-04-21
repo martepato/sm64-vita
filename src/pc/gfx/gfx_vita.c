@@ -51,11 +51,10 @@ bool gfx_vita_start_frame() {
 }
 
 void gfx_vita_swap_buffers_begin() {
-    vglStopRenderingInit();
 }
 
 void gfx_vita_swap_buffers_end() {
-    vglStopRenderingTerm();
+	    vglSwapBuffers(GL_FALSE);
 }
 
 double gfx_vita_get_time() {
