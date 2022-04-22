@@ -26,8 +26,6 @@ This allows the game to be rendered at 60 FPS instead of 30 FPS by interpolation
 
 The Mario head intro is the only exception which is still rendered at 30 FPS.
 
-This patch is rather unstable on the Vita, some levels simply will not load with it.
-
 ## Crash Screen - `crash.patch`
 
 This enhancement provides a crash screen that is displayed when the code throws a hardware exception. This may be useful for diagnosing crashes in game code.
@@ -64,3 +62,11 @@ In the Scripts window, double click on "RecordDemo" on the list on the left side
 When this is done, it should turn green which lets you know that it has started.
 
 When your demo has been recorded, it will be dumped to the newly created `/SM64_DEMOS/` folder within the Project64 directory.
+
+## HD Mario Model - `hd_mario.patch`
+
+This patch replaces Mario's model with one that has a higher polygon count. Causes some lags in certain areas.
+
+## No Drawing Distance - `nodrawingdistance.patch`
+
+Removes the drawing distance, allows you to see objects and enemies from far away

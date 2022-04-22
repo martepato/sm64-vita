@@ -1,0 +1,551 @@
+diff --git a/src/engine/behavior_script.c b/src/engine/behavior_script.c
+index 64039c9..5f259c1 100644
+--- a/src/engine/behavior_script.c
++++ b/src/engine/behavior_script.c
+@@ -989,11 +989,12 @@ void cur_obj_update(void) {
+     } else if ((objFlags & OBJ_FLAG_COMPUTE_DIST_TO_MARIO) && gCurrentObject->collisionData == NULL) {
+         if (!(objFlags & OBJ_FLAG_ACTIVE_FROM_AFAR)) {
+             // If the object has a render distance, check if it should be shown.
+-            if (distanceFromMario > gCurrentObject->oDrawingDistance) {
++            /*if (distanceFromMario > gCurrentObject->oDrawingDistance) {
+                 // Out of render distance, hide the object.
+                 gCurrentObject->header.gfx.node.flags &= ~GRAPH_RENDER_ACTIVE;
+                 gCurrentObject->activeFlags |= ACTIVE_FLAG_FAR_AWAY;
+-            } else if (gCurrentObject->oHeldState == HELD_FREE) {
++            } else if (gCurrentObject->oHeldState == HELD_FREE) {*/
++			if (distanceFromMario <= gCurrentObject->oDrawingDistance && gCurrentObject->oHeldState == HELD_FREE) {
+                 // In render distance (and not being held), show the object.
+                 gCurrentObject->header.gfx.node.flags |= GRAPH_RENDER_ACTIVE;
+                 gCurrentObject->activeFlags &= ~ACTIVE_FLAG_FAR_AWAY;
+diff --git a/src/engine/surface_load.c b/src/engine/surface_load.c
+index c61f255..98ed3a4 100644
+--- a/src/engine/surface_load.c
++++ b/src/engine/surface_load.c
+@@ -839,9 +839,9 @@ void load_object_collision_model(void) {
+         }
+     }
+ 
+-    if (marioDist < gCurrentObject->oDrawingDistance) {
++    //if (marioDist < gCurrentObject->oDrawingDistance) {
+         gCurrentObject->header.gfx.node.flags |= GRAPH_RENDER_ACTIVE;
+-    } else {
++    /*} else {
+         gCurrentObject->header.gfx.node.flags &= ~GRAPH_RENDER_ACTIVE;
+-    }
++    }*/
+ }
+diff --git a/src/game/behaviors/bub.inc.c b/src/game/behaviors/bub.inc.c
+index 47c9b6a..ab8c341 100644
+--- a/src/game/behaviors/bub.inc.c
++++ b/src/game/behaviors/bub.inc.c
+@@ -7,12 +7,12 @@
+ void bub_spawner_act_0(void) {
+     s32 i;
+     s32 sp18 = o->oBirdChirpChirpUnkF4;
+-    if (o->oDistanceToMario < 1500.0f) {
++    //if (o->oDistanceToMario < 1500.0f) {
+         for (i = 0; i < sp18; i++) {
+             spawn_object(o, MODEL_BUB, bhvBub);
+         }
+         o->oAction = 1;
+-    }
++    //}
+ }
+ 
+ void bub_spawner_act_1(void) {
+diff --git a/src/game/behaviors/chain_chomp.inc.c b/src/game/behaviors/chain_chomp.inc.c
+index 54c136c..d7ec5b4 100644
+--- a/src/game/behaviors/chain_chomp.inc.c
++++ b/src/game/behaviors/chain_chomp.inc.c
+@@ -50,7 +50,7 @@ static void chain_chomp_act_uninitialized(void) {
+     struct ChainSegment *segments;
+     s32 i;
+ 
+-    if (o->oDistanceToMario < 3000.0f) {
++    //if (o->oDistanceToMario < 3000.0f) {
+         segments = mem_pool_alloc(gObjectMemoryPool, 5 * sizeof(struct ChainSegment));
+         if (segments != NULL) {
+             // Each segment represents the offset of a chain part to the pivot.
+@@ -78,7 +78,7 @@ static void chain_chomp_act_uninitialized(void) {
+                 cur_obj_unhide();
+             }
+         }
+-    }
++    //}
+ }
+ 
+ /**
+@@ -355,10 +355,10 @@ static void chain_chomp_act_move(void) {
+     f32 maxDistToPivot;
+ 
+     // Unload chain if mario is far enough
+-    if (o->oChainChompReleaseStatus == CHAIN_CHOMP_NOT_RELEASED && o->oDistanceToMario > 4000.0f) {
++    /*if (o->oChainChompReleaseStatus == CHAIN_CHOMP_NOT_RELEASED && o->oDistanceToMario > 4000.0f) {
+         o->oAction = CHAIN_CHOMP_ACT_UNLOAD_CHAIN;
+         o->oForwardVel = o->oVelY = 0.0f;
+-    } else {
++    } else {*/
+         cur_obj_update_floor_and_walls();
+ 
+         switch (o->oChainChompReleaseStatus) {
+@@ -442,7 +442,7 @@ static void chain_chomp_act_move(void) {
+             o->oGravity = -4.0f;
+             o->oChainChompTargetPitch = -0x3000;
+         }
+-    }
++    //}
+ }
+ 
+ /**
+diff --git a/src/game/behaviors/cloud.inc.c b/src/game/behaviors/cloud.inc.c
+index 0efc780..3bf0e26 100644
+--- a/src/game/behaviors/cloud.inc.c
++++ b/src/game/behaviors/cloud.inc.c
+@@ -47,10 +47,10 @@ static void cloud_act_spawn_parts(void) {
+  * Wait for mario to approach, then unhide and enter the spawn parts action.
+  */
+ static void cloud_act_fwoosh_hidden(void) {
+-    if (o->oDistanceToMario < 2000.0f) {
++    //if (o->oDistanceToMario < 2000.0f) {
+         cur_obj_unhide();
+         o->oAction = CLOUD_ACT_SPAWN_PARTS;
+-    }
++    //}
+ }
+ 
+ /**
+@@ -58,9 +58,9 @@ static void cloud_act_fwoosh_hidden(void) {
+  * long enough, blow wind at him.
+  */
+ static void cloud_fwoosh_update(void) {
+-    if (o->oDistanceToMario > 2500.0f) {
++    /*if (o->oDistanceToMario > 2500.0f) {
+         o->oAction = CLOUD_ACT_UNLOAD;
+-    } else {
++    } else {*/
+         if (o->oCloudBlowing) {
+             o->header.gfx.scale[0] += o->oCloudGrowSpeed;
+ 
+@@ -95,7 +95,7 @@ static void cloud_fwoosh_update(void) {
+         }
+ 
+         cur_obj_scale(o->header.gfx.scale[0]);
+-    }
++    //}
+ }
+ 
+ /**
+diff --git a/src/game/behaviors/coin.inc.c b/src/game/behaviors/coin.inc.c
+index bbd07fc..a054fad 100644
+--- a/src/game/behaviors/coin.inc.c
++++ b/src/game/behaviors/coin.inc.c
+@@ -224,19 +224,19 @@ void bhv_coin_formation_loop(void) {
+ 
+     switch (o->oAction) {
+         case 0:
+-            if (o->oDistanceToMario < 2000.0f) {
++            //if (o->oDistanceToMario < 2000.0f) {
+                 for (bitIndex = 0; bitIndex < 8; bitIndex++) {
+                     if (!(o->oCoinUnkF4 & (1 << bitIndex))) {
+                         spawn_coin_in_formation(bitIndex, o->oBehParams2ndByte);
+                     }
+                 }
+                 o->oAction++;
+-            }
++            //}
+             break;
+         case 1:
+-            if (o->oDistanceToMario > 2100.0f) {
++            /*if (o->oDistanceToMario > 2100.0f) {
+                 o->oAction++;
+-            }
++            }*/
+             break;
+         case 2:
+             o->oAction = 0;
+diff --git a/src/game/behaviors/enemy_lakitu.inc.c b/src/game/behaviors/enemy_lakitu.inc.c
+index b120d7d..2d83912 100644
+--- a/src/game/behaviors/enemy_lakitu.inc.c
++++ b/src/game/behaviors/enemy_lakitu.inc.c
+@@ -24,12 +24,12 @@ static struct ObjectHitbox sEnemyLakituHitbox = {
+  * Wait for mario to approach, then spawn the cloud and become visible.
+  */
+ static void enemy_lakitu_act_uninitialized(void) {
+-    if (o->oDistanceToMario < 2000.0f) {
++    //if (o->oDistanceToMario < 2000.0f) {
+         spawn_object_relative_with_scale(CLOUD_BP_LAKITU_CLOUD, 0, 0, 0, 2.0f, o, MODEL_MIST, bhvCloud);
+ 
+         cur_obj_unhide();
+         o->oAction = ENEMY_LAKITU_ACT_MAIN;
+-    }
++    //}
+ }
+ 
+ /**
+diff --git a/src/game/behaviors/fish.inc.c b/src/game/behaviors/fish.inc.c
+index 7ef2969..2376692 100644
+--- a/src/game/behaviors/fish.inc.c
++++ b/src/game/behaviors/fish.inc.c
+@@ -37,7 +37,7 @@ static void fish_spawner_act_spawn(void) {
+     // Spawn and animate the schoolQuantity of fish if Mario enters render distance
+     // or the stage is Secret Aquarium.
+     // Fish moves randomly within a range of 700.0f.
+-    if (o->oDistanceToMario < minDistToMario || gCurrLevelNum == LEVEL_SA) {
++    //if (o->oDistanceToMario < minDistToMario || gCurrLevelNum == LEVEL_SA) {
+         for (i = 0; i < schoolQuantity; i++) {
+             struct Object *fishObject = spawn_object(o, model, bhvFish);
+             fishObject->oBehParams2ndByte = o->oBehParams2ndByte;
+@@ -45,7 +45,7 @@ static void fish_spawner_act_spawn(void) {
+             obj_translate_xyz_random(fishObject, 700.0f);
+         }
+         o->oAction = FISH_SPAWNER_ACT_IDLE;
+-    }
++    //}
+ }
+ 
+ /**
+@@ -53,9 +53,9 @@ static void fish_spawner_act_spawn(void) {
+  * Mario is more than 2000 units higher.
+  */
+ static void fish_spawner_act_idle(void) {
+-    if ((gCurrLevelNum != LEVEL_SA) && (gMarioObject->oPosY - o->oPosY > 2000.0f)) {
++    /*if ((gCurrLevelNum != LEVEL_SA) && (gMarioObject->oPosY - o->oPosY > 2000.0f)) {
+         o->oAction = FISH_SPAWNER_ACT_RESPAWN;
+-    }
++    }*/
+ }
+ 
+ /**
+diff --git a/src/game/behaviors/goomba.inc.c b/src/game/behaviors/goomba.inc.c
+index 7089c34..77b4f2e 100644
+--- a/src/game/behaviors/goomba.inc.c
++++ b/src/game/behaviors/goomba.inc.c
+@@ -75,7 +75,7 @@ void bhv_goomba_triplet_spawner_update(void) {
+     // If mario is close enough and the goombas aren't currently loaded, then
+     // spawn them
+     if (o->oAction == GOOMBA_TRIPLET_SPAWNER_ACT_UNLOADED) {
+-        if (o->oDistanceToMario < 3000.0f) {
++        //if (o->oDistanceToMario < 3000.0f) {
+             // The spawner is capable of spawning more than 3 goombas, but this
+             // is not used in the game
+             s32 dAngle =
+@@ -94,11 +94,11 @@ void bhv_goomba_triplet_spawner_update(void) {
+             }
+ 
+             o->oAction++;
+-        }
++        /*}
+     } else if (o->oDistanceToMario > 4000.0f) {
+         // If mario is too far away, enter the unloaded action. The goombas
+         // will detect this and unload themselves
+-        o->oAction = GOOMBA_TRIPLET_SPAWNER_ACT_UNLOADED;
++        o->oAction = GOOMBA_TRIPLET_SPAWNER_ACT_UNLOADED;*/
+     }
+ }
+ 
+diff --git a/src/game/behaviors/heave_ho.inc.c b/src/game/behaviors/heave_ho.inc.c
+index 2a8ab26..50825f8 100644
+--- a/src/game/behaviors/heave_ho.inc.c
++++ b/src/game/behaviors/heave_ho.inc.c
+@@ -89,9 +89,8 @@ void heave_ho_act_3(void) {
+ }
+ 
+ void heave_ho_act_0(void) {
+-    cur_obj_set_pos_to_home();
+-
+-    if (find_water_level(o->oPosX, o->oPosZ) < o->oPosY && o->oDistanceToMario < 4000.0f) {
++    if (find_water_level(o->oPosX, o->oPosZ) < (o->oPosY - 50.0f)) {
++		cur_obj_set_pos_to_home();
+         cur_obj_become_tangible();
+         cur_obj_unhide();
+         o->oAction = 1;
+diff --git a/src/game/behaviors/king_bobomb.inc.c b/src/game/behaviors/king_bobomb.inc.c
+index 3c35449..a8bf403 100644
+--- a/src/game/behaviors/king_bobomb.inc.c
++++ b/src/game/behaviors/king_bobomb.inc.c
+@@ -366,11 +366,11 @@ void king_bobomb_move(void) {
+     cur_obj_call_action_function(sKingBobombActions);
+     exec_anim_sound_state(sKingBobombSoundStates);
+ 
+-    if (o->oDistanceToMario < 5000.0f) {
++    //if (o->oDistanceToMario < 5000.0f) {
+         cur_obj_enable_rendering();
+-    } else {
++    /*} else {
+         cur_obj_disable_rendering();
+-    }
++    }*/
+ }
+ 
+ void bhv_king_bobomb_loop(void) {
+diff --git a/src/game/behaviors/lll_floating_wood_piece.inc.c b/src/game/behaviors/lll_floating_wood_piece.inc.c
+index 6abb42a..035f083 100644
+--- a/src/game/behaviors/lll_floating_wood_piece.inc.c
++++ b/src/game/behaviors/lll_floating_wood_piece.inc.c
+@@ -19,20 +19,20 @@ void bhv_lll_floating_wood_bridge_loop(void) {
+ 
+     switch (o->oAction) {
+         case 0:
+-            if (o->oDistanceToMario < 2500.0f) {
++            //if (o->oDistanceToMario < 2500.0f) {
+                 for (i = 1; i < 4; i++) {
+                     sp3C = spawn_object_relative(0, (i - 2) * 300, 0, 0, o,
+                                                  MODEL_LLL_WOOD_BRIDGE, bhvLllWoodPiece);
+                     sp3C->oLllWoodPieceOscillationTimer = i * 0x1000;
+                 }
+                 o->oAction = 1;
+-            }
++            //}
+             break;
+ 
+         case 1:
+-            if (o->oDistanceToMario > 2600.0f) {
++            /*if (o->oDistanceToMario > 2600.0f) {
+                 o->oAction = 2;
+-            }
++            }*/
+             break;
+ 
+         case 2:
+diff --git a/src/game/behaviors/lll_rotating_hex_flame.inc.c b/src/game/behaviors/lll_rotating_hex_flame.inc.c
+index 4637f31..74ccb3c 100644
+--- a/src/game/behaviors/lll_rotating_hex_flame.inc.c
++++ b/src/game/behaviors/lll_rotating_hex_flame.inc.c
+@@ -35,9 +35,9 @@ void fire_bar_spawn_flames(s16 a0) {
+ }
+ 
+ void fire_bar_act_0(void) {
+-    if (o->oDistanceToMario < 3000.0f) {
++    //if (o->oDistanceToMario < 3000.0f) {
+         o->oAction = 1;
+-    }
++    //}
+ }
+ 
+ void fire_bar_act_1(void) {
+@@ -51,9 +51,9 @@ void fire_bar_act_1(void) {
+ void fire_bar_act_2(void) {
+     o->oAngleVelYaw = -0x100;
+     o->oMoveAngleYaw += o->oAngleVelYaw;
+-    if (o->oDistanceToMario > 3200.0f) {
++    /*if (o->oDistanceToMario > 3200.0f) {
+         o->oAction = 3;
+-    }
++    }*/
+ }
+ 
+ void fire_bar_act_3(void) {
+diff --git a/src/game/behaviors/piranha_plant.inc.c b/src/game/behaviors/piranha_plant.inc.c
+index 9e97a8b..a50b534 100644
+--- a/src/game/behaviors/piranha_plant.inc.c
++++ b/src/game/behaviors/piranha_plant.inc.c
+@@ -335,14 +335,14 @@ void (*TablePiranhaPlantActions[])(void) = {
+ void bhv_piranha_plant_loop(void) {
+     cur_obj_call_action_function(TablePiranhaPlantActions);
+ 
+-    // In WF, hide all Piranha Plants once high enough up.
++    /* In WF, hide all Piranha Plants once high enough up.
+     if (gCurrLevelNum == LEVEL_WF) {
+         if (gMarioObject->oPosY > 3400.0f) {
+             cur_obj_hide();
+         } else {
+             cur_obj_unhide();
+         }
+-    }
++    }*/
+ 
+     o->oInteractStatus = 0;
+ }
+diff --git a/src/game/behaviors/pokey.inc.c b/src/game/behaviors/pokey.inc.c
+index 9f87086..58882b7 100644
+--- a/src/game/behaviors/pokey.inc.c
++++ b/src/game/behaviors/pokey.inc.c
+@@ -151,7 +151,7 @@ static void pokey_act_uninitialized(void) {
+     s32 i;
+     s16 partModel;
+ 
+-    if (o->oDistanceToMario < 2000.0f) {
++    //if (o->oDistanceToMario < 2000.0f) {
+         partModel = MODEL_POKEY_HEAD;
+ 
+         for (i = 0; i < 5; i++) {
+@@ -170,7 +170,7 @@ static void pokey_act_uninitialized(void) {
+         o->oPokeyNumAliveBodyParts = 5;
+         o->oPokeyBottomBodyPartSize = 1.0f;
+         o->oAction = POKEY_ACT_WANDER;
+-    }
++    //}
+ }
+ 
+ /**
+@@ -184,9 +184,9 @@ static void pokey_act_wander(void) {
+ 
+     if (o->oPokeyNumAliveBodyParts == 0) {
+         obj_mark_for_deletion(o);
+-    } else if (o->oDistanceToMario > 2500.0f) {
++    /*} else if (o->oDistanceToMario > 2500.0f) {
+         o->oAction = POKEY_ACT_UNLOAD_PARTS;
+-        o->oForwardVel = 0.0f;
++        o->oForwardVel = 0.0f;*/
+     } else {
+         treat_far_home_as_mario(1000.0f);
+         cur_obj_update_floor_and_walls();
+diff --git a/src/game/behaviors/sl_walking_penguin.inc.c b/src/game/behaviors/sl_walking_penguin.inc.c
+index 11273eb..712bc04 100644
+--- a/src/game/behaviors/sl_walking_penguin.inc.c
++++ b/src/game/behaviors/sl_walking_penguin.inc.c
+@@ -103,9 +103,9 @@ void bhv_sl_walking_penguin_loop(void) {
+     }
+ 
+     cur_obj_move_standard(-78);
+-    if (!cur_obj_hide_if_mario_far_away_y(1000.0f)) {
++    //if (!cur_obj_hide_if_mario_far_away_y(1000.0f)) {
+         play_penguin_walking_sound(PENGUIN_WALK_BIG);
+-    }
++    //}
+ 
+     // Adjust the position to get a point better lined up with the visual model, for stopping the wind.
+     // The new point is 60 units behind the penguin and 100 units perpedicularly, away from the snowman.
+diff --git a/src/game/behaviors/snufit.inc.c b/src/game/behaviors/snufit.inc.c
+index d3a9fc5..2a950cf 100644
+--- a/src/game/behaviors/snufit.inc.c
++++ b/src/game/behaviors/snufit.inc.c
+@@ -175,7 +175,7 @@ void bhv_snufit_loop(void) {
+ void bhv_snufit_balls_loop(void) {
+     // If far from Mario or in a different room, despawn.
+     if ((o->activeFlags & ACTIVE_FLAG_IN_DIFFERENT_ROOM)
+-        || (o->oTimer != 0 && o->oDistanceToMario > 1500.0f)) {
++        /*|| (o->oTimer != 0 && o->oDistanceToMario > 1500.0f)*/) {
+         obj_mark_for_deletion(o);
+     }
+ 
+diff --git a/src/game/behaviors/triplet_butterfly.inc.c b/src/game/behaviors/triplet_butterfly.inc.c
+index d39a316..a3ae2dc 100644
+--- a/src/game/behaviors/triplet_butterfly.inc.c
++++ b/src/game/behaviors/triplet_butterfly.inc.c
+@@ -55,9 +55,9 @@ static void triplet_butterfly_act_init(void) {
+ }
+ 
+ static void triplet_butterfly_act_wander(void) {
+-    if (o->oDistanceToMario > 1500.0f) {
++    /*if (o->oDistanceToMario > 1500.0f) {
+         obj_mark_for_deletion(o);
+-    } else {
++    } else {*/
+         approach_f32_ptr(&o->oTripletButterflySpeed, 8.0f, 0.5f);
+         if (o->oTimer < 60) {
+             o->oTripletButterflyTargetYaw = cur_obj_angle_to_home();
+@@ -83,7 +83,7 @@ static void triplet_butterfly_act_wander(void) {
+ 
+         obj_move_pitch_approach(o->oTripletButterflyTargetPitch, 400);
+         cur_obj_rotate_yaw_toward(o->oTripletButterflyTargetYaw, random_linear_offset(400, 800));
+-    }
++    //}
+ }
+ 
+ static void triplet_butterfly_act_activate(void) {
+diff --git a/src/game/behaviors/water_bomb_cannon.inc.c b/src/game/behaviors/water_bomb_cannon.inc.c
+index a213482..3d39ef8 100644
+--- a/src/game/behaviors/water_bomb_cannon.inc.c
++++ b/src/game/behaviors/water_bomb_cannon.inc.c
+@@ -38,19 +38,20 @@ void bhv_bubble_cannon_barrel_loop(void) {
+ }
+ 
+ void water_bomb_cannon_act_0(void) {
+-    if (o->oDistanceToMario < 2000.0f) {
++    //if (o->oDistanceToMario < 2000.0f) {
+         spawn_object(o, MODEL_CANNON_BARREL, bhvCannonBarrelBubbles);
+         cur_obj_unhide();
+ 
+         o->oAction = 1;
+         o->oMoveAnglePitch = o->oWaterCannonUnkFC = 0x1C00;
+-    }
++    //}
+ }
+ 
+ void water_bomb_cannon_act_1(void) {
+-    if (o->oDistanceToMario > 2500.0f) {
++    /*if (o->oDistanceToMario > 2500.0f) {
+         o->oAction = 2;
+-    } else if (o->oBehParams2ndByte == 0) {
++    } else if (o->oBehParams2ndByte == 0) {*/
++	if (o->oBehParams2ndByte == 0) {
+         if (o->oWaterCannonUnkF4 != 0) {
+             o->oWaterCannonUnkF4--;
+         } else {
+diff --git a/src/game/behaviors/whirlpool.inc.c b/src/game/behaviors/whirlpool.inc.c
+index 84a5105..18f687b 100644
+--- a/src/game/behaviors/whirlpool.inc.c
++++ b/src/game/behaviors/whirlpool.inc.c
+@@ -35,7 +35,7 @@ void whirpool_orient_graph(void) {
+ }
+ 
+ void bhv_whirlpool_loop(void) {
+-    if (o->oDistanceToMario < 5000.0f) {
++    //if (o->oDistanceToMario < 5000.0f) {
+         o->header.gfx.node.flags &= ~GRAPH_RENDER_INVISIBLE;
+ 
+         // not sure if actually an array
+@@ -52,10 +52,10 @@ void bhv_whirlpool_loop(void) {
+         whirpool_orient_graph();
+ 
+         o->oFaceAngleYaw += 8000;
+-    } else {
++    /*} else {
+         o->header.gfx.node.flags |= GRAPH_RENDER_INVISIBLE;
+         gEnvFxBubbleConfig[ENVFX_STATE_PARTICLECOUNT] = 0;
+-    }
++    }*/
+ 
+     cur_obj_play_sound_1(SOUND_ENV_WATER);
+ 
+diff --git a/src/game/behaviors/whomp.inc.c b/src/game/behaviors/whomp.inc.c
+index fe39da7..fb6c185 100644
+--- a/src/game/behaviors/whomp.inc.c
++++ b/src/game/behaviors/whomp.inc.c
+@@ -282,11 +282,11 @@ void bhv_whomp_loop(void) {
+     cur_obj_call_action_function(sWhompActions);
+     cur_obj_move_standard(-20);
+     if (o->oAction != 9) {
+-        if (o->oBehParams2ndByte != 0) {
++        /*if (o->oBehParams2ndByte != 0) {
+             cur_obj_hide_if_mario_far_away_y(2000.0f);
+         } else {
+             cur_obj_hide_if_mario_far_away_y(1000.0f);
+-        }
++        }*/
+         load_object_collision_model();
+     }
+ }
+diff --git a/src/game/obj_behaviors.c b/src/game/obj_behaviors.c
+index 68c78e2..4b8b6c5 100644
+--- a/src/game/obj_behaviors.c
++++ b/src/game/obj_behaviors.c
+@@ -531,11 +531,11 @@ void set_object_visibility(struct Object *obj, s32 dist) {
+     f32 objY = obj->oPosY;
+     f32 objZ = obj->oPosZ;
+ 
+-    if (is_point_within_radius_of_mario(objX, objY, objZ, dist) == TRUE) {
++    //if (is_point_within_radius_of_mario(objX, objY, objZ, dist) == TRUE) {
+         obj->header.gfx.node.flags &= ~GRAPH_RENDER_INVISIBLE;
+-    } else {
++    /*} else {
+         obj->header.gfx.node.flags |= GRAPH_RENDER_INVISIBLE;
+-    }
++    }*/
+ }
+ 
+ /**
+diff --git a/src/game/object_list_processor.h b/src/game/object_list_processor.h
+index aed11fb..d58db67 100644
+--- a/src/game/object_list_processor.h
++++ b/src/game/object_list_processor.h
+@@ -23,7 +23,7 @@
+ /**
+  * The maximum number of objects that can be loaded at once.
+  */
+-#define OBJECT_POOL_CAPACITY 240
++#define OBJECT_POOL_CAPACITY 960
+ 
+ /**
+  * Every object is categorized into an object list, which controls the order
