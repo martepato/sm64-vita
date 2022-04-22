@@ -235,8 +235,7 @@ static struct ShaderProgram *gfx_vitagl_create_and_load_new_shader(uint32_t shad
         append_line(fs_buf, &fs_len, "float4 vFog : TEXCOORD1,");
     }
     for (int i = 0; i < cc_features.num_inputs; i++) {
-        fs_len += sprintf(fs_buf + fs_len, "float%d vInput%d : TEXCOORD%d,\n",
-                          cc_features.opt_alpha ? 4 : 3, i + 1, i + 2);
+        fs_len += sprintf(fs_buf + fs_len, "float%d vInput%d : TEXCOORD%d,\n", cc_features.opt_alpha ? 4 : 3, i + 1, i + 2);
     }
     if (cc_features.used_textures[0]) {
         append_line(fs_buf, &fs_len, "uniform sampler2D uTex0 : TEXUNIT0,");
@@ -264,16 +263,12 @@ static struct ShaderProgram *gfx_vitagl_create_and_load_new_shader(uint32_t shad
     append_str(fs_buf, &fs_len, cc_features.opt_alpha ? "float4 texel = " : "float3 texel = ");
     if (!cc_features.color_alpha_same && cc_features.opt_alpha) {
         append_str(fs_buf, &fs_len, "float4(");
-        append_formula(fs_buf, &fs_len, cc_features.c, cc_features.do_single[0],
-                       cc_features.do_multiply[0], cc_features.do_mix[0], false, false, true);
+        append_formula(fs_buf, &fs_len, cc_features.c, cc_features.do_single[0], cc_features.do_multiply[0], cc_features.do_mix[0], false, false, true);
         append_str(fs_buf, &fs_len, ", ");
-        append_formula(fs_buf, &fs_len, cc_features.c, cc_features.do_single[1],
-                       cc_features.do_multiply[1], cc_features.do_mix[1], true, true, true);
+        append_formula(fs_buf, &fs_len, cc_features.c, cc_features.do_single[1], cc_features.do_multiply[1], cc_features.do_mix[1], true, true, true);
         append_str(fs_buf, &fs_len, ")");
     } else {
-        append_formula(fs_buf, &fs_len, cc_features.c, cc_features.do_single[0],
-                       cc_features.do_multiply[0], cc_features.do_mix[0], cc_features.opt_alpha, false,
-                       cc_features.opt_alpha);
+        append_formula(fs_buf, &fs_len, cc_features.c, cc_features.do_single[0], cc_features.do_multiply[0], cc_features.do_mix[0], cc_features.opt_alpha, false, cc_features.opt_alpha);
     }
     append_line(fs_buf, &fs_len, ";");
 
@@ -290,9 +285,7 @@ static struct ShaderProgram *gfx_vitagl_create_and_load_new_shader(uint32_t shad
     }
 
     if (cc_features.opt_alpha && cc_features.opt_noise) {
-        append_line(fs_buf, &fs_len,
-                    "texel.a *= floor(random(float3(floor(gl_FragCoord.xy * (240.0 / "
-                    "float(window_height))), float(frame_count))) + 0.5);");
+        append_line(fs_buf, &fs_len, "texel.a *= floor(random(float3(floor(gl_FragCoord.xy * (240.0 / float(window_height))), float(frame_count))) + 0.5);");
     }
 
     if (cc_features.opt_alpha) {
@@ -328,25 +321,23 @@ static struct ShaderProgram *gfx_vitagl_create_and_load_new_shader(uint32_t shad
     GLuint shader_program = glCreateProgram();
     glAttachShader(shader_program, vertex_shader);
     glAttachShader(shader_program, fragment_shader);
-
+	glLinkProgram(shader_program);
+	
     size_t cnt = 0;
 
     struct ShaderProgram *prg = &shader_program_pool[shader_program_pool_size++];
-    glBindAttribLocation(shader_program, cnt, "aVtxPos");
-    prg->attrib_locations[cnt] = cnt;
+    prg->attrib_locations[cnt] = glGetAttribLocation(shader_program, "aVtxPos");
     prg->attrib_sizes[cnt] = 4;
     ++cnt;
 
     if (cc_features.used_textures[0] || cc_features.used_textures[1]) {
-        glBindAttribLocation(shader_program, cnt, "aTexCoord");
-        prg->attrib_locations[cnt] = cnt;
+        prg->attrib_locations[cnt] = glGetAttribLocation(shader_program, "aTexCoord");
         prg->attrib_sizes[cnt] = 2;
         ++cnt;
     }
 
     if (cc_features.opt_fog) {
-        glBindAttribLocation(shader_program, cnt, "aFog");
-        prg->attrib_locations[cnt] = cnt;
+        prg->attrib_locations[cnt] = glGetAttribLocation(shader_program, "aFog");
         prg->attrib_sizes[cnt] = 4;
         ++cnt;
     }
@@ -354,13 +345,10 @@ static struct ShaderProgram *gfx_vitagl_create_and_load_new_shader(uint32_t shad
     for (int i = 0; i < cc_features.num_inputs; i++) {
         char name[16];
         sprintf(name, "aInput%d", i + 1);
-        glBindAttribLocation(shader_program, cnt, name);
-        prg->attrib_locations[cnt] = cnt;
+        prg->attrib_locations[cnt] = glGetAttribLocation(shader_program, name);
         prg->attrib_sizes[cnt] = cc_features.opt_alpha ? 4 : 3;
         ++cnt;
     }
-
-    glLinkProgram(shader_program);
 
     prg->shader_id = shader_id;
     prg->opengl_program_id = shader_program;
@@ -371,6 +359,15 @@ static struct ShaderProgram *gfx_vitagl_create_and_load_new_shader(uint32_t shad
     prg->num_attribs = cnt;
 
     gfx_vitagl_load_shader(prg);
+	
+	if (cc_features.used_textures[0]) {
+        GLint sampler_location = glGetUniformLocation(shader_program, "uTex0");
+        glUniform1i(sampler_location, 0);
+    }
+    if (cc_features.used_textures[1]) {
+        GLint sampler_location = glGetUniformLocation(shader_program, "uTex1");
+        glUniform1i(sampler_location, 1);
+    }
 
     if (cc_features.opt_alpha && cc_features.opt_noise) {
         prg->frame_count_location = glGetUniformLocation(shader_program, "frame_count");
@@ -417,7 +414,7 @@ static uint32_t gfx_cm_to_opengl(uint32_t val) {
     if (val & G_TX_CLAMP) {
         return GL_CLAMP_TO_EDGE;
     }
-    return (val & G_TX_MIRROR) ? GL_MIRRORED_REPEAT : GL_REPEAT;
+    return (val & G_TX_MIRROR) ? GL_MIRROR_CLAMP_EXT : GL_REPEAT;
 }
 
 static void gfx_vitagl_set_sampler_parameters(int tile, bool linear_filter, uint32_t cms, uint32_t cmt) {
