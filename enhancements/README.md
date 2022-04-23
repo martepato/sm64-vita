@@ -65,8 +65,8 @@ When your demo has been recorded, it will be dumped to the newly created `/SM64_
 
 ## HD Mario Model - `hd_mario.patch`
 
-This patch replaces Mario's model with one that has a higher polygon count. Causes some lags in certain areas.
+This patch replaces Mario's model with one that has a higher polygon count. Causes some lags in certain areas, especially when used together with the 60 FPS or No Drawing Distance patch.
 
 ## No Drawing Distance - `nodrawingdistance.patch`
 
-Removes the drawing distance, allows you to see objects and enemies from far away
+Removes the drawing distance, allows you to see objects and enemies from far away. Causes crashes when used together with the 60 FPS patch.
