@@ -1,15 +1,15 @@
 diff --git a/Makefile b/Makefile
-index 3231115..b831e37 100644
+index 155716c..f05e2a5 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -646,6 +646,7 @@ $(BUILD_DIR)/include/text_strings.h: $(BUILD_DIR)/include/text_menu_strings.h
+@@ -704,6 +704,7 @@ $(BUILD_DIR)/include/text_strings.h: $(BUILD_DIR)/include/text_menu_strings.h
  $(BUILD_DIR)/src/menu/file_select.o: $(BUILD_DIR)/include/text_strings.h
  $(BUILD_DIR)/src/menu/star_select.o: $(BUILD_DIR)/include/text_strings.h
  $(BUILD_DIR)/src/game/ingame_menu.o: $(BUILD_DIR)/include/text_strings.h
 +$(BUILD_DIR)/src/game/camera.o: $(BUILD_DIR)/include/text_strings.h
  
- ################################################################
- # TEXTURE GENERATION                                           #
+ 
+ #==============================================================================#
 diff --git a/enhancements/puppycam.h b/enhancements/puppycam.h
 new file mode 100644
 index 0000000..1b3f70c
@@ -456,7 +456,7 @@ index 0000000..7b5b24d
 +        if ((gPlayer1Controller->buttonPressed & L_CBUTTONS) && newcam_analogue == 0)
 +        {
 +            #ifndef nosound
-+            play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
++            play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gGlobalSoundSource);
 +            #endif
 +            if (newcam_modeflags & NC_FLAG_8D)
 +                newcam_yaw_target = newcam_yaw_target+(ivrt(newcam_invertX)*0x2000);
@@ -468,7 +468,7 @@ index 0000000..7b5b24d
 +        if ((gPlayer1Controller->buttonPressed & R_CBUTTONS) && newcam_analogue == 0)
 +        {
 +            #ifndef nosound
-+            play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
++            play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gGlobalSoundSource);
 +            #endif
 +            if (newcam_modeflags & NC_FLAG_8D)
 +                newcam_yaw_target = newcam_yaw_target-(ivrt(newcam_invertX)*0x2000);
@@ -518,7 +518,7 @@ index 0000000..7b5b24d
 +            newcam_yaw_target = newcam_yaw+(ivrt(newcam_invertX)*0x3000);
 +            newcam_centering = 1;
 +            #ifndef nosound
-+            play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
++            play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gGlobalSoundSource);
 +            #endif
 +        }
 +        newcam_framessincec[0] = 0;
@@ -530,7 +530,7 @@ index 0000000..7b5b24d
 +            newcam_yaw_target = newcam_yaw-(ivrt(newcam_invertX)*0x3000);
 +            newcam_centering = 1;
 +            #ifndef nosound
-+            play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
++            play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gGlobalSoundSource);
 +            #endif
 +        }
 +        newcam_framessincec[1] = 0;
@@ -551,7 +551,7 @@ index 0000000..7b5b24d
 +                    newcam_cstick_down = 1;
 +                    newcam_centering = 1;
 +                    #ifndef nosound
-+                    play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
++                    play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gGlobalSoundSource);
 +                    #endif
 +                    if (newcam_stick2[0] > 20)
 +                    {
@@ -617,7 +617,7 @@ index 0000000..7b5b24d
 +    if (gPlayer1Controller->buttonPressed & R_TRIG && newcam_modeflags & NC_FLAG_XTURN)
 +    {
 +        #ifndef nosound
-+        play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gDefaultSoundArgs);
++        play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
 +        #endif
 +
 +        if (newcam_distance_target == newcam_distance_values[0])
@@ -1058,7 +1058,7 @@ index 0000000..7b5b24d
 +    if (gPlayer1Controller->buttonPressed & R_TRIG)
 +    {
 +            #ifndef nosound
-+            play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
++            play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
 +            #endif
 +        if (newcam_option_open == 0)
 +        {
@@ -1099,7 +1099,7 @@ index 0000000..7b5b24d
 +                    default: newcam_option_timer += 5; break;
 +                }
 +                #ifndef nosound
-+                play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
++                play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
 +                #endif
 +                if (gPlayer1Controller->rawStickY >= 60 || gPlayer1Controller->buttonDown & U_JPAD)
 +                {
@@ -1128,7 +1128,7 @@ index 0000000..7b5b24d
 +                    default: newcam_option_timer += 5; break;
 +                }
 +                #ifndef nosound
-+                play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
++                play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
 +                #endif
 +                if (gPlayer1Controller->rawStickX >= 60 || gPlayer1Controller->buttonDown & R_JPAD)
 +                    newcam_change_setting(1);
@@ -1382,20 +1382,21 @@ index 0000000..7fded1b
 +    print_text_fmt_int(32,48,"%d",newcam_yaw);
 +}
 diff --git a/include/segments.h b/include/segments.h
-index a8c1bf9..f6bfa63 100644
+index a97d6ee..4f3de3b 100644
 --- a/include/segments.h
 +++ b/include/segments.h
-@@ -1,5 +1,7 @@
+@@ -1,7 +1,7 @@
 -#ifndef SEGMENTS_H
 -#define SEGMENTS_H
 +#ifndef _SEGMENTS_H
 +#define _SEGMENTS_H
-+
+ 
+-#include "config.h"
 +#define USE_EXT_RAM
  
  /*
   * Memory addresses for segments. Ideally, this header file would not be
-@@ -44,13 +46,13 @@
+@@ -46,13 +46,13 @@
   */
  
  #define SEG_BUFFERS      0x8005C000 // 0x0085000 in size
@@ -1495,10 +1496,10 @@ index 749179b..f0deb0f 100644
   * Global Symbols
   */
 diff --git a/src/engine/math_util.c b/src/engine/math_util.c
-index 58c5e3f..488f67d 100644
+index 72fa625..e59e69d 100644
 --- a/src/engine/math_util.c
 +++ b/src/engine/math_util.c
-@@ -49,6 +49,35 @@ void *vec3f_sum(Vec3f dest, Vec3f a, Vec3f b) {
+@@ -56,6 +56,35 @@ void *vec3f_sum(Vec3f dest, Vec3f a, Vec3f b) {
      return &dest; //! warning: function returns address of local variable
  }
  
@@ -1561,7 +1562,7 @@ index cb37d52..2013402 100644
  void *vec3f_to_vec3s(Vec3s dest, Vec3f a);
  void *find_vector_perpendicular_to_plane(Vec3f dest, Vec3f a, Vec3f b, Vec3f c);
 diff --git a/src/engine/surface_collision.c b/src/engine/surface_collision.c
-index 9aff62f..c4109bb 100644
+index c59a143..b0bd5a5 100644
 --- a/src/engine/surface_collision.c
 +++ b/src/engine/surface_collision.c
 @@ -12,6 +12,8 @@
@@ -1574,10 +1575,10 @@ index 9aff62f..c4109bb 100644
   * Iterate through the list of walls until all walls are checked and
   * have given their wall push.
 diff --git a/src/game/camera.c b/src/game/camera.c
-index 60bfb86..2e1f23f 100644
+index 216fe0e..612a3cc 100644
 --- a/src/game/camera.c
 +++ b/src/game/camera.c
-@@ -700,6 +700,8 @@ f32 calc_y_to_curr_floor(f32 *posOff, f32 posMul, f32 posBound, f32 *focOff, f32
+@@ -704,6 +704,8 @@ BAD_RETURN(f32) calc_y_to_curr_floor(f32 *posOff, f32 posMul, f32 posBound, f32
          *focOff = -focBound;
      }
  }
@@ -1586,7 +1587,7 @@ index 60bfb86..2e1f23f 100644
  
  void focus_on_mario(Vec3f focus, Vec3f pos, f32 posYOff, f32 focYOff, f32 dist, s16 pitch, s16 yaw) {
      Vec3f marioPos;
-@@ -2852,6 +2854,8 @@ void set_camera_mode(struct Camera *c, s16 mode, s16 frames) {
+@@ -2855,6 +2857,8 @@ void set_camera_mode(struct Camera *c, s16 mode, s16 frames) {
      struct LinearTransitionPoint *start = &sModeInfo.transitionStart;
      struct LinearTransitionPoint *end = &sModeInfo.transitionEnd;
  
@@ -1595,7 +1596,7 @@ index 60bfb86..2e1f23f 100644
      if (mode == CAMERA_MODE_WATER_SURFACE && gCurrLevelArea == AREA_TTM_OUTSIDE) {
      } else {
          // Clear movement flags that would affect the transition
-@@ -2895,6 +2899,7 @@ void set_camera_mode(struct Camera *c, s16 mode, s16 frames) {
+@@ -2898,6 +2902,7 @@ void set_camera_mode(struct Camera *c, s16 mode, s16 frames) {
          vec3f_get_dist_and_angle(start->focus, start->pos, &start->dist, &start->pitch, &start->yaw);
          vec3f_get_dist_and_angle(end->focus, end->pos, &end->dist, &end->pitch, &end->yaw);
      }
@@ -1603,7 +1604,7 @@ index 60bfb86..2e1f23f 100644
  }
  
  /**
-@@ -2979,7 +2984,7 @@ void update_lakitu(struct Camera *c) {
+@@ -2982,7 +2987,7 @@ void update_lakitu(struct Camera *c) {
          gLakituState.roll += sHandheldShakeRoll;
          gLakituState.roll += gLakituState.keyDanceRoll;
  
@@ -1612,7 +1613,7 @@ index 60bfb86..2e1f23f 100644
              gCheckingSurfaceCollisionsForCamera = TRUE;
              distToFloor = find_floor(gLakituState.pos[0],
                                       gLakituState.pos[1] + 20.0f,
-@@ -3012,7 +3017,7 @@ void update_camera(struct Camera *c) {
+@@ -3015,7 +3020,7 @@ void update_camera(struct Camera *c) {
      update_camera_hud_status(c);
      if (c->cutscene == 0) {
          // Only process R_TRIG if 'fixed' is not selected in the menu
@@ -1621,7 +1622,7 @@ index 60bfb86..2e1f23f 100644
              if (gPlayer1Controller->buttonPressed & R_TRIG) {
                  if (set_cam_angle(0) == CAM_ANGLE_LAKITU) {
                      set_cam_angle(CAM_ANGLE_MARIO);
-@@ -3050,10 +3055,18 @@ void update_camera(struct Camera *c) {
+@@ -3053,10 +3058,18 @@ void update_camera(struct Camera *c) {
      c->mode = gLakituState.mode;
      c->defMode = gLakituState.defMode;
  
@@ -1642,7 +1643,7 @@ index 60bfb86..2e1f23f 100644
  
      if (c->cutscene != 0) {
          sYawSpeed = 0;
-@@ -3091,6 +3104,10 @@ void update_camera(struct Camera *c) {
+@@ -3094,6 +3107,10 @@ void update_camera(struct Camera *c) {
                      mode_cannon_camera(c);
                      break;
  
@@ -1653,7 +1654,7 @@ index 60bfb86..2e1f23f 100644
                  default:
                      mode_mario_camera(c);
              }
-@@ -3150,6 +3167,10 @@ void update_camera(struct Camera *c) {
+@@ -3153,6 +3170,10 @@ void update_camera(struct Camera *c) {
                  case CAMERA_MODE_SPIRAL_STAIRS:
                      mode_spiral_stairs_camera(c);
                      break;
@@ -1664,7 +1665,7 @@ index 60bfb86..2e1f23f 100644
              }
          }
      }
-@@ -3425,6 +3446,13 @@ void init_camera(struct Camera *c) {
+@@ -3434,6 +3455,13 @@ void init_camera(struct Camera *c) {
      gLakituState.nextYaw = gLakituState.yaw;
      c->yaw = gLakituState.yaw;
      c->nextYaw = gLakituState.yaw;
@@ -1678,7 +1679,7 @@ index 60bfb86..2e1f23f 100644
  }
  
  /**
-@@ -5513,6 +5541,9 @@ void set_camera_mode_8_directions(struct Camera *c) {
+@@ -5524,6 +5552,9 @@ void set_camera_mode_8_directions(struct Camera *c) {
          s8DirModeBaseYaw = 0;
          s8DirModeYawOffset = 0;
      }
@@ -1688,7 +1689,7 @@ index 60bfb86..2e1f23f 100644
  }
  
  /**
-@@ -5524,6 +5555,9 @@ void set_camera_mode_boss_fight(struct Camera *c) {
+@@ -5535,6 +5566,9 @@ void set_camera_mode_boss_fight(struct Camera *c) {
          transition_to_camera_mode(c, CAMERA_MODE_BOSS_FIGHT, 15);
          sModeOffsetYaw = c->nextYaw - DEGREES(45);
      }
@@ -1698,7 +1699,7 @@ index 60bfb86..2e1f23f 100644
  }
  
  void set_camera_mode_close_cam(u8 *mode) {
-@@ -5531,6 +5565,9 @@ void set_camera_mode_close_cam(u8 *mode) {
+@@ -5542,6 +5576,9 @@ void set_camera_mode_close_cam(u8 *mode) {
          sStatusFlags &= ~CAM_FLAG_SMOOTH_MOVEMENT;
          *mode = CAMERA_MODE_CLOSE;
      }
@@ -1708,7 +1709,7 @@ index 60bfb86..2e1f23f 100644
  }
  
  /**
-@@ -5555,6 +5592,9 @@ void set_camera_mode_radial(struct Camera *c, s16 transitionTime) {
+@@ -5566,6 +5603,9 @@ void set_camera_mode_radial(struct Camera *c, s16 transitionTime) {
          }
          sModeOffsetYaw = 0;
      }
@@ -1718,7 +1719,7 @@ index 60bfb86..2e1f23f 100644
  }
  
  /**
-@@ -6933,6 +6973,7 @@ s16 cutscene_object(u8 cutscene, struct Object *o) {
+@@ -6939,6 +6979,7 @@ s16 cutscene_object(u8 cutscene, struct Object *o) {
  void update_camera_yaw(struct Camera *c) {
      c->nextYaw = calculate_yaw(c->focus, c->pos);
      c->yaw = c->nextYaw;
@@ -1726,7 +1727,7 @@ index 60bfb86..2e1f23f 100644
  }
  
  void cutscene_reset_spline(void) {
-@@ -9201,7 +9242,12 @@ BAD_RETURN(s32) cutscene_non_painting_end(struct Camera *c) {
+@@ -9209,7 +9250,12 @@ BAD_RETURN(s32) cutscene_non_painting_end(struct Camera *c) {
  
      if (c->defMode == CAMERA_MODE_CLOSE) {
          c->mode = CAMERA_MODE_CLOSE;
@@ -1740,15 +1741,15 @@ index 60bfb86..2e1f23f 100644
          c->mode = CAMERA_MODE_FREE_ROAM;
      }
  
-@@ -9957,6 +10003,7 @@ BAD_RETURN(s32) cutscene_sliding_doors_follow_mario(struct Camera *c) {
+@@ -9965,6 +10011,7 @@ BAD_RETURN(s32) cutscene_sliding_doors_follow_mario(struct Camera *c) {
  BAD_RETURN(s32) cutscene_sliding_doors_open(struct Camera *c) {
-     UNUSED u32 pad[2];
+     UNUSED u8 filler[8];
  
 +    newcam_apply_outside_values(c,1);
      reset_pan_distance(c);
      cutscene_event(cutscene_sliding_doors_open_start, c, 0, 8);
      cutscene_event(cutscene_sliding_doors_open_set_cvars, c, 8, 8);
-@@ -10153,7 +10200,10 @@ BAD_RETURN(s32) cutscene_unused_exit_focus_mario(struct Camera *c) {
+@@ -10160,7 +10207,10 @@ BAD_RETURN(s32) cutscene_unused_exit_focus_mario(struct Camera *c) {
   * Give control back to the player.
   */
  BAD_RETURN(s32) cutscene_exit_painting_end(struct Camera *c) {
@@ -1760,7 +1761,7 @@ index 60bfb86..2e1f23f 100644
      c->cutscene = 0;
      gCutsceneTimer = CUTSCENE_STOP;
      sStatusFlags |= CAM_FLAG_SMOOTH_MOVEMENT;
-@@ -10313,10 +10363,15 @@ BAD_RETURN(s32) cutscene_door_follow_mario(struct Camera *c) {
+@@ -10319,10 +10369,15 @@ BAD_RETURN(s32) cutscene_door_follow_mario(struct Camera *c) {
   * Ends the door cutscene. Sets the camera mode to close mode unless the default is free roam.
   */
  BAD_RETURN(s32) cutscene_door_end(struct Camera *c) {
@@ -1780,18 +1781,18 @@ index 60bfb86..2e1f23f 100644
  
      c->cutscene = 0;
 diff --git a/src/game/camera.h b/src/game/camera.h
-index f56ed02..36bb6d9 100644
+index dc72927..3772994 100644
 --- a/src/game/camera.h
 +++ b/src/game/camera.h
 @@ -112,6 +112,7 @@
  #define CAMERA_MODE_8_DIRECTIONS      0x0E // AKA Parallel Camera, Bowser Courses & Rainbow Ride
  #define CAMERA_MODE_FREE_ROAM         0x10
  #define CAMERA_MODE_SPIRAL_STAIRS     0x11
-+#define CAM_MODE_NEWCAM 0x12
++#define CAM_MODE_NEWCAM               0x12
  
  #define CAM_MOVE_RETURN_TO_MIDDLE       0x0001
  #define CAM_MOVE_ZOOMED_OUT             0x0002
-@@ -656,8 +657,6 @@ struct LakituState
+@@ -641,8 +642,6 @@ struct LakituState {
      /*0xBC*/ s16 unused;
  };
  
@@ -1800,7 +1801,7 @@ index f56ed02..36bb6d9 100644
  // BSS
  extern s16 sSelectionFlags;
  extern s16 sCameraSoundFlags;
-@@ -667,7 +666,6 @@ extern struct LakituState gLakituState;
+@@ -652,7 +651,6 @@ extern struct LakituState gLakituState;
  extern s16 gCameraMovementFlags;
  extern s32 gObjCutsceneDone;
  extern struct Camera *gCamera;
@@ -1809,28 +1810,28 @@ index f56ed02..36bb6d9 100644
  extern struct Object *gCutsceneFocus;
  extern struct Object *gSecondCameraFocus;
 diff --git a/src/game/game_init.c b/src/game/game_init.c
-index 3ce5f2d..856388b 100644
+index b39d786..0fc713e 100644
 --- a/src/game/game_init.c
 +++ b/src/game/game_init.c
-@@ -20,6 +20,8 @@
+@@ -19,6 +19,8 @@
+ #include "segment2.h"
  #include "segment_symbols.h"
- #include "thread6.h"
- #include <prevent_bss_reordering.h>
+ #include "rumble_init.h"
 +#include "../../enhancements/puppycam.h"
 +#include "pc/controller/controller_xinput.h"
  
- // FIXME: I'm not sure all of these variables belong in this file, but I don't
- // know of a good way to split them
-@@ -609,6 +611,7 @@ void thread5_game_loop(UNUSED void *arg) {
+ // First 3 controller slots
+ struct Controller gControllers[3];
+@@ -693,6 +695,7 @@ void thread5_game_loop(UNUSED void *arg) {
  
      play_music(SEQ_PLAYER_SFX, SEQUENCE_ARGS(0, SEQ_SOUND_PLAYER), 0);
      set_sound_mode(save_file_get_sound_mode());
 +    newcam_init_settings();
  
  #ifdef TARGET_N64
-     rendering_init();
+     render_init();
 diff --git a/src/game/hud.c b/src/game/hud.c
-index 8d4daa5..c1f2099 100644
+index 5a0f680..2ebf5ce 100644
 --- a/src/game/hud.c
 +++ b/src/game/hud.c
 @@ -13,6 +13,7 @@
@@ -1841,7 +1842,7 @@ index 8d4daa5..c1f2099 100644
  
  /* @file hud.c
   * This file implements HUD rendering and power meter animations.
-@@ -469,7 +470,8 @@ void render_hud(void) {
+@@ -452,7 +453,8 @@ void render_hud(void) {
  
          if (hudDisplayFlags & HUD_DISPLAY_FLAG_CAMERA_AND_POWER) {
              render_hud_power_meter();
@@ -1852,7 +1853,7 @@ index 8d4daa5..c1f2099 100644
  
          if (hudDisplayFlags & HUD_DISPLAY_FLAG_TIMER) {
 diff --git a/src/game/ingame_menu.c b/src/game/ingame_menu.c
-index b9a43df..f6f2d7f 100644
+index 5c74037..9ed916a 100644
 --- a/src/game/ingame_menu.c
 +++ b/src/game/ingame_menu.c
 @@ -22,6 +22,7 @@
@@ -1861,9 +1862,9 @@ index b9a43df..f6f2d7f 100644
  #include "types.h"
 +#include "../../enhancements/puppycam.h"
  
- u16 gDialogColorFadeTimer;
- s8 gLastDialogLineNum;
-@@ -2603,7 +2604,10 @@ s16 render_pause_courses_and_castle(void) {
+ #ifdef VERSION_EU
+ #undef LANGUAGE_FUNCTION
+@@ -2614,7 +2615,10 @@ s16 render_pause_courses_and_castle(void) {
  #ifdef VERSION_EU
      gInGameLanguage = eu_get_language();
  #endif
@@ -1874,8 +1875,8 @@ index b9a43df..f6f2d7f 100644
 +    #endif
      switch (gDialogBoxState) {
          case DIALOG_STATE_OPENING:
-             gDialogLineNum = 1;
-@@ -2679,6 +2683,16 @@ s16 render_pause_courses_and_castle(void) {
+             gDialogLineNum = MENU_OPT_DEFAULT;
+@@ -2688,6 +2692,16 @@ s16 render_pause_courses_and_castle(void) {
      if (gDialogTextAlpha < 250) {
          gDialogTextAlpha += 25;
      }
@@ -1890,21 +1891,21 @@ index b9a43df..f6f2d7f 100644
 +    newcam_render_option_text();
 +    #endif
  
-     return 0;
+     return MENU_OPT_NONE;
  }
 diff --git a/src/game/mario.c b/src/game/mario.c
-index 5b103fa..3e55490 100644
+index cc5e864..0a2f048 100644
 --- a/src/game/mario.c
 +++ b/src/game/mario.c
-@@ -33,6 +33,7 @@
+@@ -32,6 +32,7 @@
  #include "save_file.h"
  #include "sound_init.h"
- #include "thread6.h"
+ #include "rumble_init.h"
 +#include "../../enhancements/puppycam.h"
  
  u32 unused80339F10;
- s8 filler80339F1C[20];
-@@ -1306,7 +1307,10 @@ void update_mario_joystick_inputs(struct MarioState *m) {
+ u8 unused80339F1C[20];
+@@ -1301,7 +1302,10 @@ void update_mario_joystick_inputs(struct MarioState *m) {
      }
  
      if (m->intendedMag > 0.0f) {
@@ -1916,7 +1917,7 @@ index 5b103fa..3e55490 100644
          m->input |= INPUT_NONZERO_ANALOG;
      } else {
          m->intendedYaw = m->faceAngle[1];
-@@ -1616,7 +1620,7 @@ void mario_update_hitbox_and_cap_model(struct MarioState *m) {
+@@ -1610,7 +1614,7 @@ void mario_update_hitbox_and_cap_model(struct MarioState *m) {
      struct MarioBodyState *bodyState = m->marioBodyState;
      s32 flags = update_and_return_cap_flags(m);
  
@@ -1926,10 +1927,10 @@ index 5b103fa..3e55490 100644
      }
  
 diff --git a/src/game/mario_misc.c b/src/game/mario_misc.c
-index e6354e8..393d8bb 100644
+index b2eb7dd..fb7b726 100644
 --- a/src/game/mario_misc.c
 +++ b/src/game/mario_misc.c
-@@ -23,6 +23,7 @@
+@@ -24,6 +24,7 @@
  #include "save_file.h"
  #include "skybox.h"
  #include "sound_init.h"
@@ -1937,7 +1938,7 @@ index e6354e8..393d8bb 100644
  
  #define TOAD_STAR_1_REQUIREMENT 12
  #define TOAD_STAR_2_REQUIREMENT 25
-@@ -296,12 +297,45 @@ void bhv_unlock_door_star_loop(void) {
+@@ -295,12 +296,45 @@ void bhv_unlock_door_star_loop(void) {
      }
  }
  
@@ -1983,7 +1984,7 @@ index e6354e8..393d8bb 100644
  
      if (alpha == 255) {
          node->fnNode.node.flags = (node->fnNode.node.flags & 0xFF) | (LAYER_OPAQUE << 8);
-@@ -311,9 +345,17 @@ static Gfx *make_gfx_mario_alpha(struct GraphNodeGenerated *node, s16 alpha) {
+@@ -310,9 +344,17 @@ static Gfx *make_gfx_mario_alpha(struct GraphNodeGenerated *node, s16 alpha) {
          node->fnNode.node.flags = (node->fnNode.node.flags & 0xFF) | (LAYER_TRANSPARENT << 8);
          gfxHead = alloc_display_list(3 * sizeof(*gfxHead));
          gfx = gfxHead;
@@ -2004,25 +2005,10 @@ index e6354e8..393d8bb 100644
      return gfxHead;
  }
 diff --git a/src/game/save_file.c b/src/game/save_file.c
-index 4748b99..bb9f149 100644
+index 85e5df1..6d14304 100644
 --- a/src/game/save_file.c
 +++ b/src/game/save_file.c
-@@ -11,11 +11,13 @@
- #include "level_table.h"
- #include "course_table.h"
- #include "thread6.h"
-+#include "../../enhancements/puppycam.h"
- 
- #define MENU_DATA_MAGIC 0x4849
- #define SAVE_FILE_MAGIC 0x4441
- 
--STATIC_ASSERT(sizeof(struct SaveBuffer) == EEPROM_SIZE, "eeprom buffer size must match");
-+STATIC_ASSERT(sizeof(struct SaveBuffer) <= EEPROM_SIZE, "eeprom buffer size higher than intended");
-+STATIC_ASSERT(sizeof(struct SaveBuffer) >= EEPROM_SIZE, "eeprom buffer size lower than intended");
- 
- extern struct SaveBuffer gSaveBuffer;
- 
-@@ -565,6 +567,51 @@ u16 save_file_get_sound_mode(void) {
+@@ -566,6 +566,51 @@ u16 save_file_get_sound_mode(void) {
      return gSaveBuffer.menuData[0].soundMode;
  }
  
@@ -2075,7 +2061,7 @@ index 4748b99..bb9f149 100644
      if (save_file_get_flags() & SAVE_FLAG_CAP_ON_GROUND) {
          switch (gSaveBuffer.files[gCurrSaveFileNum - 1][0].capLevel) {
 diff --git a/src/game/save_file.h b/src/game/save_file.h
-index 3ee5a19..4480db1 100644
+index ad1b62a..f46d78a 100644
 --- a/src/game/save_file.h
 +++ b/src/game/save_file.h
 @@ -8,7 +8,16 @@
@@ -2095,8 +2081,8 @@ index 3ee5a19..4480db1 100644
 +
  #define NUM_SAVE_FILES 4
  
- struct SaveBlockSignature
-@@ -52,7 +61,17 @@ struct MainMenuSaveData
+ struct SaveBlockSignature {
+@@ -49,7 +58,17 @@ struct MainMenuSaveData {
      // on the high score screen.
      u32 coinScoreAges[NUM_SAVE_FILES];
      u16 soundMode;
@@ -2115,7 +2101,7 @@ index 3ee5a19..4480db1 100644
  #ifdef VERSION_EU
      u16 language;
  #define SUBTRAHEND 8
-@@ -60,8 +79,10 @@ struct MainMenuSaveData
+@@ -57,8 +76,10 @@ struct MainMenuSaveData {
  #define SUBTRAHEND 6
  #endif
  
@@ -2126,7 +2112,7 @@ index 3ee5a19..4480db1 100644
  
      struct SaveBlockSignature signature;
  };
-@@ -72,6 +93,11 @@ struct SaveBuffer
+@@ -68,6 +89,11 @@ struct SaveBuffer {
      struct SaveFile files[NUM_SAVE_FILES][2];
      // The main menu data has two copies. If one is bad, the other is used as a backup.
      struct MainMenuSaveData menuData[2];
@@ -2138,7 +2124,7 @@ index 3ee5a19..4480db1 100644
  };
  
  extern u8 gLastCompletedCourseNum;
-@@ -144,6 +170,12 @@ s32 save_file_get_cap_pos(Vec3s capPos);
+@@ -148,6 +174,12 @@ s32 save_file_get_cap_pos(Vec3s capPos);
  void save_file_set_sound_mode(u16 mode);
  u16 save_file_get_sound_mode(void);
  void save_file_move_cap_to_default_location(void);
@@ -2256,7 +2242,7 @@ index 587b28f..628dfff 100644
  #endif
  
 diff --git a/src/pc/controller/controller_xinput.c b/src/pc/controller/controller_xinput.c
-index bb44bc1..3d16161 100644
+index e8634d7..c74961c 100644
 --- a/src/pc/controller/controller_xinput.c
 +++ b/src/pc/controller/controller_xinput.c
 @@ -9,6 +9,8 @@
@@ -2268,9 +2254,9 @@ index bb44bc1..3d16161 100644
  static void xinput_init(void) {
  }
  
-@@ -36,7 +38,21 @@ static void xinput_read(OSContPad *pad) {
-                 pad->stick_x = gp->sThumbLX / 0x100;
-                 pad->stick_y = gp->sThumbLY / 0x100;
+@@ -38,6 +40,19 @@ static void xinput_read(OSContPad *pad) {
+                 pad->stick_x = gp->sThumbLX / 409;
+                 pad->stick_y = gp->sThumbLY / 409;
              }
 +            uint32_t magnitude_sq2 = (uint32_t)(gp->sThumbRX * gp->sThumbRX) + (uint32_t)(gp->sThumbRY * gp->sThumbRY);
 +            if (magnitude_sq2 > (uint32_t)(DEADZONE * DEADZONE)) {
@@ -2286,10 +2272,8 @@ index bb44bc1..3d16161 100644
 +
 +            }
              break;
-+
          }
      }
- }
 diff --git a/src/pc/controller/controller_xinput.h b/src/pc/controller/controller_xinput.h
 index be1e68c..0a7fa9a 100644
 --- a/src/pc/controller/controller_xinput.h
