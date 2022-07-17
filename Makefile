@@ -520,6 +520,7 @@ ifeq ($(TARGET_VITA),1)
     -lSceSysmodule_stub -lSceCtrl_stub -lSceTouch_stub -lm \
     -lSceAppUtil_stub -lc -lScePower_stub -lSceCommonDialog_stub \
     -lSceAudio_stub -lSceAudioIn_stub -lSceShaccCg_stub -lSceGxm_stub -lSceDisplay_stub \
+		-lSceShaccCgExt -ltaihen_stub \
     -lSceKernelDmacMgr_stub -lSceIofilemgr_stub -lSceHid_stub -lSceMotion_stub -lm
 endif
 
