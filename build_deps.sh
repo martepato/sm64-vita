@@ -7,8 +7,8 @@ cd deps
 
 git clone https://github.com/Rinnegatamante/vitaGL.git
 cd vitaGL
-git reset --hard 7e155bf
-make HAVE_SHARK=1 install -j4
+git reset --hard 88b8269
+make install -j4
 
 cd ../../
 rm -rf deps
