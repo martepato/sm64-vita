@@ -63,6 +63,7 @@ void check_for_shader_compiler() {
         }
         sceKernelExitProcess(0);
     }
+	fclose(libshacccg);
 }
 
 static bool gfx_vitagl_z_is_from_0_to_1(void) {
