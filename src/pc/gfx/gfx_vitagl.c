@@ -41,7 +41,10 @@ static uint32_t frame_count;
 static uint32_t current_height;
 
 void check_for_shader_compiler() {
-    if(!vglHasRuntimeShaderCompiler()) {
+	
+	FILE *libshacccg = fopen("ur0:data/libshacccg.suprx", "rb");
+	
+    if(libshacccg == NULL) {
         SceMsgDialogParam param;
         sceMsgDialogParamInit(&param);
 
@@ -471,7 +474,6 @@ static void gfx_vitagl_draw_triangles(float buf_vbo[], size_t buf_vbo_len, size_
 }
 
 static void gfx_vitagl_init(void) {
-    vglEnableRuntimeShaderCompiler(GL_TRUE);
     vglUseVram(GL_TRUE);
     vglWaitVblankStart(GL_TRUE);
 
